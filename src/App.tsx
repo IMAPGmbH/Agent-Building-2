@@ -29,7 +29,6 @@ interface ChatMessage {
   id: string;
   text: string;
   sender: 'user' | 'agent';
-  timestamp: Date;
 }
 
 function App() {
@@ -169,15 +168,13 @@ function App() {
     const userMessage: ChatMessage = {
       id: Math.random().toString(36).substr(2, 9) + '_user',
       text: chatInput.trim(),
-      sender: 'user',
-      timestamp: new Date()
+      sender: 'user'
     };
 
     const agentResponse: ChatMessage = {
       id: Math.random().toString(36).substr(2, 9) + '_agent',
       text: `Echo: "${chatInput.trim()}" (Antwort von ${selectedAgent?.name || 'Demo Agent'})`,
-      sender: 'agent',
-      timestamp: new Date(Date.now() + 100)
+      sender: 'agent'
     };
 
     setMessages(prevMessages => [...prevMessages, userMessage, agentResponse]);
@@ -529,23 +526,20 @@ function App() {
                 Chat mit: {selectedAgent.name}
               </h1>
 
-              <div className="flex-grow bg-primary-700 p-4 border border-primary-100 overflow-y-auto mb-4 rounded-none">
+              <div className="flex-grow bg-primary-700 p-4 overflow-y-auto mb-4">
                 {messages.length === 0 && (
                   <p className="text-gray-400 text-center">Beginne die Konversation...</p>
                 )}
                 {messages.map(msg => (
                   <div
                     key={msg.id}
-                    className={`mb-3 p-3 rounded-none max-w-[80%] ${
+                    className={`mb-3 p-3 max-w-[80%] ${
                       msg.sender === 'user'
                         ? 'bg-primary-450 text-white ml-auto'
-                        : 'bg-secondary-150 text-primary-700 mr-auto border border-primary-400'
+                        : 'bg-secondary-150 text-primary-700 mr-auto'
                     }`}
                   >
                     <p className="text-sm">{msg.text}</p>
-                    <p className="text-xs text-gray-500 mt-1 text-right">
-                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
                   </div>
                 ))}
                 <div ref={chatEndRef} />
@@ -553,7 +547,7 @@ function App() {
 
               <form
                 onSubmit={handleSendMessage}
-                className="flex items-center gap-2 p-4 bg-primary-700 border border-primary-100 rounded-none"
+                className="flex items-center gap-2 p-4 bg-primary-700"
               >
                 <textarea
                   value={chatInput}
@@ -565,12 +559,12 @@ function App() {
                     }
                   }}
                   placeholder="Deine Nachricht..."
-                  className="flex-grow p-2 border border-gray-300 rounded-none resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea text-gray-900 bg-white"
+                  className="flex-grow p-2 border-0 resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea text-gray-900 bg-white"
                   rows={1}
                 />
                 <button
                   type="submit"
-                  className="p-2 bg-imap-mint text-primary-900 rounded-none hover:bg-imap-mintHover"
+                  className="p-2 bg-imap-mint text-primary-900 hover:bg-imap-mintHover"
                 >
                   <Send className="w-5 h-5" />
                 </button>
