@@ -6,6 +6,7 @@ interface Agent {
   id: string;
   name: string;
   description: string;
+  systemPrompt?: string;
   configuration: Record<string, string>;
 }
 
@@ -40,10 +41,16 @@ function App() {
   const [globalPrompts, setGlobalPrompts] = useState<GlobalPrompt[]>([]);
   const [newPrompt, setNewPrompt] = useState({ title: '', content: '', category: 'Allgemein' });
   const [isAgentsSubmenuOpen, setIsAgentsSubmenuOpen] = useState(false);
-  const [newAgent, setNewAgent] = useState({ name: '', description: '', model: 'GPT-4o (OpenAI)' });
+  const [newAgent, setNewAgent] = useState({ 
+    name: '', 
+    description: '', 
+    systemPrompt: '',
+    model: 'GPT-4o (OpenAI)' 
+  });
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
+  const [isSystemPromptVisible, setIsSystemPromptVisible] = useState(false);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -96,6 +103,7 @@ function App() {
       id: Date.now().toString(),
       name: newAgent.name,
       description: newAgent.description,
+      systemPrompt: newAgent.systemPrompt,
       configuration: {
         model: newAgent.model
       }
@@ -104,7 +112,7 @@ function App() {
     setAgents(prevAgents => [newAgentData, ...prevAgents]);
     setActiveTab('dashboard');
     setIsAgentsSubmenuOpen(true);
-    setNewAgent({ name: '', description: '', model: 'GPT-4o (OpenAI)' });
+    setNewAgent({ name: '', description: '', systemPrompt: '', model: 'GPT-4o (OpenAI)' });
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -250,8 +258,10 @@ function App() {
                   <button
                     key={agent.id}
                     onClick={() => {
-                      setActiveTab('viewAgent');
-                      console.log(`Agent ${agent.name} ausgewählt. Implementiere Ansicht.`);
+                      setSelectedAgent(agent);
+                      setActiveTab('chat');
+                      setMessages([]);
+                      setIsSystemPromptVisible(false);
                     }}
                     className="flex items-center space-x-2 w-full p-1.5 text-sm text-gray-300 hover:bg-primary-600 hover:text-white rounded-md"
                   >
@@ -288,11 +298,13 @@ function App() {
                     id: 'demo',
                     name: 'Demo Agent',
                     description: 'Ein Agent zum Testen des Chats',
+                    systemPrompt: 'Du bist ein hilfreicher Assistent, der für Demonstrationszwecke dient.',
                     configuration: {}
                   });
                 }
                 setActiveTab('chat');
                 setMessages([]);
+                setIsSystemPromptVisible(false);
               }}
               className={`flex items-center space-x-2 w-full p-2 ${
                 activeTab === 'chat' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
@@ -320,8 +332,10 @@ function App() {
                       <div className="mt-4">
                         <button
                           onClick={() => {
-                            setActiveTab('viewAgent');
-                            console.log(`Agent ${agent.name} öffnen. Implementiere Ansicht.`);
+                            setSelectedAgent(agent);
+                            setActiveTab('chat');
+                            setMessages([]);
+                            setIsSystemPromptVisible(false);
                           }}
                           className="text-sm font-medium text-imap-turquoise hover:text-imap-navy"
                         >
@@ -366,6 +380,19 @@ function App() {
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
                       placeholder="Was ist die Aufgabe des Agents?"
                       required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Systemprompt:
+                    </label>
+                    <textarea
+                      name="agentSystemPrompt"
+                      value={newAgent.systemPrompt}
+                      onChange={(e) => setNewAgent({...newAgent, systemPrompt: e.target.value})}
+                      rows={4}
+                      className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
+                      placeholder="Gib hier ein, was die Aufgabe des KI-Agenten sein soll."
                     />
                   </div>
                   <div>
@@ -547,6 +574,29 @@ function App() {
               <h1 className="text-2xl font-bold text-white mb-4">
                 Chat mit: {selectedAgent.name}
               </h1>
+
+              {selectedAgent.systemPrompt && (
+                <div className="mb-4 bg-primary-700">
+                  <div
+                    className="flex justify-between items-center p-2 cursor-pointer hover:bg-primary-600"
+                    onClick={() => setIsSystemPromptVisible(!isSystemPromptVisible)}
+                  >
+                    <span className="text-sm font-medium text-white">Systemprompt</span>
+                    {isSystemPromptVisible ? (
+                      <ChevronDown className="w-5 h-5 text-white" />
+                    ) : (
+                      <ChevronRight className="w-5 h-5 text-white" />
+                    )}
+                  </div>
+                  {isSystemPromptVisible && (
+                    <div className="p-3 bg-[#383640]">
+                      <p className="text-sm text-gray-200 whitespace-pre-wrap">
+                        {selectedAgent.systemPrompt}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="flex-grow bg-primary-700 p-4 overflow-y-auto mb-4">
                 {messages.length === 0 && (
