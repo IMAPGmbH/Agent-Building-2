@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Settings, Users, PlusCircle, Key, Upload, FileText, Trash2, Database, MessageSquare } from 'lucide-react';
+import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare } from 'lucide-react';
 import ImapLogo from './components/ImapLogo';
 
 interface Agent {
@@ -28,8 +28,7 @@ interface GlobalPrompt {
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [openaiKey, setOpenaiKey] = useState('');
-  const [isKeyValid, setIsKeyValid] = useState(false);
+  const [isKeyValid, setIsKeyValid] = useState(true);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [globalPrompts, setGlobalPrompts] = useState<GlobalPrompt[]>([]);
@@ -44,12 +43,6 @@ function App() {
   ];
 
   useEffect(() => {
-    const savedKey = localStorage.getItem('openai_key');
-    if (savedKey) {
-      setOpenaiKey(savedKey);
-      validateApiKey(savedKey);
-    }
-
     const savedFiles = localStorage.getItem('uploaded_files');
     if (savedFiles) {
       setUploadedFiles(JSON.parse(savedFiles));
@@ -60,27 +53,6 @@ function App() {
       setGlobalPrompts(JSON.parse(savedPrompts));
     }
   }, []);
-
-  const validateApiKey = async (key: string) => {
-    try {
-      const response = await fetch('https://api.openai.com/v1/models', {
-        headers: {
-          'Authorization': `Bearer ${key}`,
-        },
-      });
-      setIsKeyValid(response.ok);
-      if (response.ok) {
-        localStorage.setItem('openai_key', key);
-      }
-    } catch (error) {
-      setIsKeyValid(false);
-    }
-  };
-
-  const handleKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    validateApiKey(openaiKey);
-  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -167,19 +139,6 @@ function App() {
               <ImapLogo />
               <span className="font-sans font-normal text-xl text-white tracking-tight">Agent Building</span>
             </div>
-            <div className="flex items-center">
-              {isKeyValid ? (
-                <span className="text-highlight-300 flex items-center">
-                  <Key className="w-5 h-5 mr-2" />
-                  API-Key aktiv
-                </span>
-              ) : (
-                <span className="text-accent-200 flex items-center">
-                  <Key className="w-5 h-5 mr-2" />
-                  API-Key erforderlich
-                </span>
-              )}
-            </div>
           </div>
         </div>
       </nav>
@@ -223,24 +182,7 @@ function App() {
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
-              {!isKeyValid ? (
-                <div className="text-center py-12 bg-white border border-primary-100">
-                  <Key className="mx-auto h-12 w-12 text-primary-300" />
-                  <h3 className="mt-2 text-sm font-semibold text-gray-900">API-Key erforderlich</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Bitte fügen Sie zuerst Ihren OpenAI API-Key in den Einstellungen hinzu.
-                  </p>
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setActiveTab('settings')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
-                    >
-                      <Settings className="w-5 h-5 mr-2" />
-                      Zu den Einstellungen
-                    </button>
-                  </div>
-                </div>
-              ) : agents.length === 0 ? (
+              {agents.length === 0 ? (
                 <div className="bg-white p-6 border border-primary-100">
                   {/* PLATZHALTER: Hier wird später die Liste der Agents oder eine alternative Ansicht angezeigt */}
                 </div>
@@ -260,70 +202,51 @@ function App() {
           {activeTab === 'create' && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Neuen Agent erstellen</h1>
-              {!isKeyValid ? (
-                <div className="text-center py-12 bg-white border border-primary-100">
-                  <Key className="mx-auto h-12 w-12 text-primary-300" />
-                  <h3 className="mt-2 text-sm font-semibold text-gray-900">API-Key erforderlich</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Bitte fügen Sie zuerst Ihren OpenAI API-Key in den Einstellungen hinzu.
-                  </p>
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setActiveTab('settings')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
+              <div className="bg-white p-6 border border-primary-100">
+                <form className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Name des Agents:
+                    </label>
+                    <input
+                      type="text"
+                      className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
+                      placeholder="Wie soll dein Agent heißen?"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Kurzbeschreibung:
+                    </label>
+                    <textarea
+                      rows={3}
+                      className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
+                      placeholder="Was ist die Aufgabe des Agents?"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      KI-Modell:
+                    </label>
+                    {/* TODO: Backend-Integration für API-Key-Abruf und dynamische Modell-Liste. Aktuell statische Auswahl. */}
+                    <select
+                      className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-select"
                     >
-                      <Settings className="w-5 h-5 mr-2" />
-                      Zu den Einstellungen
+                      <option>GPT-4o (OpenAI)</option>
+                      <option>Gemini 2.5 Pro (Google)</option>
+                      <option>Claude 3.7 Sonett (Anthropic)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
+                    >
+                      Agent erstellen
                     </button>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-white p-6 border border-primary-100">
-                  <form className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Name des Agents:
-                      </label>
-                      <input
-                        type="text"
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
-                        placeholder="Wie soll dein Agent heißen?"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Kurzbeschreibung:
-                      </label>
-                      <textarea
-                        rows={3}
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
-                        placeholder="Was ist die Aufgabe des Agents?"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        KI-Modell:
-                      </label>
-                      {/* TODO: Backend-Integration für API-Key-Abruf und dynamische Modell-Liste. Aktuell statische Auswahl. */}
-                      <select
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-select"
-                      >
-                        <option>GPT-4o (OpenAI)</option>
-                        <option>Gemini 2.5 Pro (Google)</option>
-                        <option>Claude 3.7 Sonett (Anthropic)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <button
-                        type="submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
-                      >
-                        Agent erstellen
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
+                </form>
+              </div>
             </div>
           )}
 
