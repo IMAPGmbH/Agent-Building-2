@@ -159,7 +159,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-primary-450">
+    <div className="min-h-screen bg-[#383640]">
       <nav className="bg-primary-500 border-b border-primary-600">
         <div className="w-full">
           <div className="flex justify-between h-16 pl-6 pr-8">
@@ -184,7 +184,7 @@ function App() {
         </div>
       </nav>
 
-      <div className="w-full h-2 bg-secondary-200"></div>
+      <div className="w-full h-1.5 bg-secondary-200"></div>
 
       <div className="flex">
         <div className="w-64 bg-primary-700 h-screen border-r border-primary-600 p-4">
@@ -192,7 +192,7 @@ function App() {
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'dashboard' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'dashboard' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Users className="w-5 h-5" />
@@ -201,7 +201,7 @@ function App() {
             <button
               onClick={() => setActiveTab('create')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'create' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'create' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <PlusCircle className="w-5 h-5" />
@@ -210,7 +210,7 @@ function App() {
             <button
               onClick={() => setActiveTab('datacenter')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'datacenter' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'datacenter' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Database className="w-5 h-5" />
@@ -219,7 +219,7 @@ function App() {
             <button
               onClick={() => setActiveTab('upload')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'upload' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'upload' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Upload className="w-5 h-5" />
@@ -228,7 +228,7 @@ function App() {
             <button
               onClick={() => setActiveTab('settings')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'settings' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'settings' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Settings className="w-5 h-5" />
@@ -237,7 +237,7 @@ function App() {
             <button
               onClick={() => setActiveTab('docs')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'docs' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
+                activeTab === 'docs' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
               <BookOpen className="w-5 h-5" />
@@ -246,7 +246,7 @@ function App() {
           </div>
         </div>
 
-        <div className="flex-1 p-8 bg-primary-500">
+        <div className="flex-1 p-8">
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
