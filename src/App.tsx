@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare } from 'lucide-react';
+import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare, ChevronDown, ChevronRight } from 'lucide-react';
 import ImapLogo from './components/ImapLogo';
 
 interface Agent {
@@ -33,6 +33,8 @@ function App() {
   const [dragActive, setDragActive] = useState(false);
   const [globalPrompts, setGlobalPrompts] = useState<GlobalPrompt[]>([]);
   const [newPrompt, setNewPrompt] = useState({ title: '', content: '', category: 'Allgemein' });
+  const [isAgentsSubmenuOpen, setIsAgentsSubmenuOpen] = useState(false);
+  const [newAgent, setNewAgent] = useState({ name: '', description: '', model: 'GPT-4o (OpenAI)' });
 
   const promptCategories = [
     'Allgemein',
@@ -53,6 +55,26 @@ function App() {
       setGlobalPrompts(JSON.parse(savedPrompts));
     }
   }, []);
+
+  const handleCreateAgentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // TODO: Backend-Integration: Hier den Agenten an das Backend senden und speichern.
+    // Die ID sollte dann vom Backend kommen. Die Liste der Agents sollte vom Backend geladen werden.
+    const newAgentData: Agent = {
+      id: Date.now().toString(),
+      name: newAgent.name,
+      description: newAgent.description,
+      configuration: {
+        model: newAgent.model
+      }
+    };
+
+    setAgents(prevAgents => [newAgentData, ...prevAgents]);
+    setActiveTab('dashboard');
+    setIsAgentsSubmenuOpen(true);
+    setNewAgent({ name: '', description: '', model: 'GPT-4o (OpenAI)' });
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -149,14 +171,41 @@ function App() {
         <div className="w-64 bg-primary-700 h-screen border-r border-primary-600 p-4">
           <div className="space-y-4">
             <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center space-x-2 w-full p-2 ${
+              onClick={() => {
+                setActiveTab('dashboard');
+                setIsAgentsSubmenuOpen(!isAgentsSubmenuOpen);
+              }}
+              className={`flex items-center justify-between w-full p-2 ${
                 activeTab === 'dashboard' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
               }`}
             >
-              <Users className="w-5 h-5" />
-              <span>Meine Agents</span>
+              <div className="flex items-center space-x-2">
+                <Users className="w-5 h-5" />
+                <span>Meine Agents</span>
+              </div>
+              {agents.length > 0 && (
+                isAgentsSubmenuOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+              )}
             </button>
+
+            {isAgentsSubmenuOpen && agents.length > 0 && (
+              <div className="pl-4 mt-1 space-y-1">
+                {/* TODO: Backend-Integration: Hier die Agents vom Backend laden und nur die letzten 3 anzeigen. */}
+                {agents.slice(0, 3).map(agent => (
+                  <button
+                    key={agent.id}
+                    onClick={() => {
+                      setActiveTab('viewAgent');
+                      console.log(`Agent ${agent.name} ausgewählt. Implementiere Ansicht.`);
+                    }}
+                    className="flex items-center space-x-2 w-full p-1.5 text-sm text-gray-300 hover:bg-primary-600 hover:text-white rounded-md"
+                  >
+                    <span>- {agent.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
             <button
               onClick={() => setActiveTab('create')}
               className={`flex items-center space-x-2 w-full p-2 ${
@@ -189,9 +238,20 @@ function App() {
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {agents.map((agent) => (
-                    <div key={agent.id} className="bg-white p-6 border border-primary-100 hover:border-highlight-300 transition-colors duration-200">
+                    <div key={agent.id} className="bg-white p-6 border border-primary-100 hover:border-highlight-300 transition-colors duration-200 rounded-lg shadow">
                       <h3 className="text-lg font-semibold text-gray-900">{agent.name}</h3>
-                      <p className="mt-2 text-sm text-gray-500">{agent.description}</p>
+                      <p className="mt-2 text-sm text-gray-500 truncate">{agent.description}</p>
+                      <div className="mt-4">
+                        <button
+                          onClick={() => {
+                            setActiveTab('viewAgent');
+                            console.log(`Agent ${agent.name} öffnen. Implementiere Ansicht.`);
+                          }}
+                          className="text-sm font-medium text-imap-turquoise hover:text-imap-navy"
+                        >
+                          Agent öffnen
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -203,15 +263,19 @@ function App() {
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Neuen Agent erstellen</h1>
               <div className="bg-white p-6 border border-primary-100">
-                <form className="space-y-6">
+                <form onSubmit={handleCreateAgentSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Name des Agents:
                     </label>
                     <input
                       type="text"
+                      name="agentName"
+                      value={newAgent.name}
+                      onChange={(e) => setNewAgent({...newAgent, name: e.target.value})}
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
                       placeholder="Wie soll dein Agent heißen?"
+                      required
                     />
                   </div>
                   <div>
@@ -219,9 +283,13 @@ function App() {
                       Kurzbeschreibung:
                     </label>
                     <textarea
+                      name="agentDescription"
+                      value={newAgent.description}
+                      onChange={(e) => setNewAgent({...newAgent, description: e.target.value})}
                       rows={3}
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
                       placeholder="Was ist die Aufgabe des Agents?"
+                      required
                     />
                   </div>
                   <div>
@@ -230,7 +298,11 @@ function App() {
                     </label>
                     {/* TODO: Backend-Integration für API-Key-Abruf und dynamische Modell-Liste. Aktuell statische Auswahl. */}
                     <select
+                      name="agentModel"
+                      value={newAgent.model}
+                      onChange={(e) => setNewAgent({...newAgent, model: e.target.value})}
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-select"
+                      required
                     >
                       <option>GPT-4o (OpenAI)</option>
                       <option>Gemini 2.5 Pro (Google)</option>
