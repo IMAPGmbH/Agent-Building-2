@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare, ChevronDown, ChevronRight, Send } from 'lucide-react';
 import ImapLogo from './components/ImapLogo';
 
 interface Agent {
@@ -25,6 +25,13 @@ interface GlobalPrompt {
   createdAt: Date;
 }
 
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: 'user' | 'agent';
+  timestamp: Date;
+}
+
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -35,6 +42,11 @@ function App() {
   const [newPrompt, setNewPrompt] = useState({ title: '', content: '', category: 'Allgemein' });
   const [isAgentsSubmenuOpen, setIsAgentsSubmenuOpen] = useState(false);
   const [newAgent, setNewAgent] = useState({ name: '', description: '', model: 'GPT-4o (OpenAI)' });
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const promptCategories = [
     'Allgemein',
@@ -59,8 +71,6 @@ function App() {
   const handleCreateAgentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // TODO: Backend-Integration: Hier den Agenten an das Backend senden und speichern.
-    // Die ID sollte dann vom Backend kommen. Die Liste der Agents sollte vom Backend geladen werden.
     const newAgentData: Agent = {
       id: Date.now().toString(),
       name: newAgent.name,
@@ -152,6 +162,33 @@ function App() {
     localStorage.setItem('global_prompts', JSON.stringify(updatedPrompts));
   };
 
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (chatInput.trim() === '') return;
+
+    const userMessage: ChatMessage = {
+      id: Math.random().toString(36).substr(2, 9) + '_user',
+      text: chatInput.trim(),
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    const agentResponse: ChatMessage = {
+      id: Math.random().toString(36).substr(2, 9) + '_agent',
+      text: `Echo: "${chatInput.trim()}" (Antwort von ${selectedAgent?.name || 'Demo Agent'})`,
+      sender: 'agent',
+      timestamp: new Date(Date.now() + 100)
+    };
+
+    setMessages(prevMessages => [...prevMessages, userMessage, agentResponse]);
+    setChatInput('');
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <div className="min-h-screen bg-[#383640]">
       <nav className="bg-primary-500 border-b border-primary-600">
@@ -190,7 +227,6 @@ function App() {
 
             {isAgentsSubmenuOpen && agents.length > 0 && (
               <div className="pl-4 mt-1 space-y-1">
-                {/* TODO: Backend-Integration: Hier die Agents vom Backend laden und nur die letzten 3 anzeigen. */}
                 {agents.slice(0, 3).map(agent => (
                   <button
                     key={agent.id}
@@ -224,6 +260,28 @@ function App() {
               <Database className="w-5 h-5" />
               <span>Datencenter</span>
             </button>
+            <button
+              onClick={() => {
+                if (!selectedAgent && agents.length > 0) {
+                  setSelectedAgent(agents[0]);
+                } else if (!selectedAgent) {
+                  setSelectedAgent({
+                    id: 'demo',
+                    name: 'Demo Agent',
+                    description: 'Ein Agent zum Testen des Chats',
+                    configuration: {}
+                  });
+                }
+                setActiveTab('chat');
+                setMessages([]);
+              }}
+              className={`flex items-center space-x-2 w-full p-2 ${
+                activeTab === 'chat' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
+              }`}
+            >
+              <MessageSquare className="w-5 h-5" />
+              <span>Chat-Vorschau</span>
+            </button>
           </div>
         </div>
 
@@ -233,7 +291,6 @@ function App() {
               <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
               {agents.length === 0 ? (
                 <div className="bg-white p-6 border border-primary-100">
-                  {/* PLATZHALTER: Hier wird später die Liste der Agents oder eine alternative Ansicht angezeigt */}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -296,7 +353,6 @@ function App() {
                     <label className="block text-sm font-medium text-gray-700">
                       KI-Modell:
                     </label>
-                    {/* TODO: Backend-Integration für API-Key-Abruf und dynamische Modell-Liste. Aktuell statische Auswahl. */}
                     <select
                       name="agentModel"
                       value={newAgent.model}
@@ -464,6 +520,68 @@ function App() {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === 'chat' && selectedAgent && (
+            <div className="flex flex-col h-[calc(100vh-10rem)]">
+              <h1 className="text-2xl font-bold text-white mb-4">
+                Chat mit: {selectedAgent.name}
+              </h1>
+
+              <div className="flex-grow bg-white p-4 border border-primary-100 overflow-y-auto mb-4 rounded-md">
+                {messages.length === 0 && (
+                  <p className="text-gray-500 text-center">Beginne die Konversation...</p>
+                )}
+                {messages.map(msg => (
+                  <div
+                    key={msg.id}
+                    className={`mb-3 p-3 rounded-lg max-w-[80%] ${
+                      msg.sender === 'user'
+                        ? 'bg-imap-mint text-primary-900 ml-auto rounded-br-none'
+                        : 'bg-primary-100 text-gray-800 mr-auto rounded-bl-none'
+                    }`}
+                  >
+                    <p className="text-sm">{msg.text}</p>
+                    <p className="text-xs text-gray-500 mt-1 text-right">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+
+              <form
+                onSubmit={handleSendMessage}
+                className="flex items-center gap-2 p-4 bg-white border border-primary-100 rounded-md"
+              >
+                <textarea
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(e as any);
+                    }
+                  }}
+                  placeholder="Deine Nachricht..."
+                  className="flex-grow p-2 border border-gray-300 rounded-md resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea"
+                  rows={1}
+                />
+                <button
+                  type="submit"
+                  className="p-2 bg-imap-mint text-primary-900 rounded-md hover:bg-imap-mintHover"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </form>
+            </div>
+          )}
+
+          {activeTab === 'chat' && !selectedAgent && (
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-6">Chat</h1>
+              <p className="text-white">Bitte wähle zuerst einen Agenten aus oder nutze die Chat-Vorschau mit einem Demo-Agenten.</p>
             </div>
           )}
         </div>
