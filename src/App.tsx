@@ -160,9 +160,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-primary-50">
-      {/* Navigation */}
       <nav className="bg-primary-500 border-b border-primary-600">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full">
           <div className="flex justify-between h-16 pl-6 pr-8">
             <div className="flex items-center gap-3">
               <ImapLogo />
@@ -186,7 +185,6 @@ function App() {
       </nav>
 
       <div className="flex">
-        {/* Sidebar */}
         <div className="w-64 bg-white h-screen border-r border-primary-100 p-4">
           <div className="space-y-4">
             <button
@@ -246,7 +244,6 @@ function App() {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 p-8">
           {activeTab === 'dashboard' && (
             <div>
@@ -300,7 +297,6 @@ function App() {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-6">Datencenter</h1>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Globale Prompts */}
                 <div className="bg-white p-6 border border-primary-100">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Globale Prompts</h2>
                   <form onSubmit={handlePromptSubmit} className="mb-6 space-y-4">
@@ -373,7 +369,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Globale Dateien */}
                 <div className="bg-white p-6 border border-primary-100">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Globale Dateien</h2>
                   <div
