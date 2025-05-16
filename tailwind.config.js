@@ -10,19 +10,21 @@ export default {
           200: '#cccccc',
           300: '#b3b3b3',
           400: '#999999',
-          500: '#000000', // Basis Schwarz
+          450: '#87868D', // New background color
+          500: '#000000',
           600: '#000000',
-          700: '#000000',
+          700: '#242329', // New dark sidebar color
           800: '#000000',
           900: '#000000',
         },
         'secondary': {
           50: '#f2eaf6',
           100: '#e5d5ed',
-          200: '#BC9BC8', // Basis Helles Violett
+          150: '#DBC6DE', // New active sidebar item color
+          200: '#BC9BC8',
           300: '#ab82bc',
           400: '#9a69b0',
-          500: '#82368C', // Basis Dunkles Violett
+          500: '#82368C',
           600: '#682b70',
           700: '#4e2054',
           800: '#341538',
@@ -31,10 +33,10 @@ export default {
         'accent': {
           50: '#f2eaf6',
           100: '#e5d5ed',
-          200: '#BC9BC8', // Basis Helles Violett
+          200: '#BC9BC8',
           300: '#ab82bc',
           400: '#9a69b0',
-          500: '#82368C', // Basis Dunkles Violett
+          500: '#82368C',
           600: '#682b70',
           700: '#4e2054',
           800: '#341538',
@@ -46,7 +48,7 @@ export default {
           200: '#ffe180',
           300: '#ffd54d',
           400: '#ffc91a',
-          500: '#e6b300', // Basis Gelb
+          500: '#e6b300',
           600: '#b38900',
           700: '#805f00',
           800: '#4d3800',
@@ -54,6 +56,7 @@ export default {
         },
         'imap': {
           mint: '#A0F0C3',
+          mintHover: '#90E0B3',
           turquoise: '#00A89E',
           navy: '#12434D',
           black: '#000000',

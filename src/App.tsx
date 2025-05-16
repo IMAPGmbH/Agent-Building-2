@@ -159,13 +159,13 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-primary-50">
+    <div className="min-h-screen bg-primary-450">
       <nav className="bg-primary-500 border-b border-primary-600">
         <div className="w-full">
           <div className="flex justify-between h-16 pl-6 pr-8">
             <div className="flex items-center gap-3">
               <ImapLogo />
-              <span className="font-sans font-normal text-xl text-white tracking-tight">IMAP Agent Building</span>
+              <span className="font-sans font-normal text-xl text-white tracking-tight">Agent Building</span>
             </div>
             <div className="flex items-center">
               {isKeyValid ? (
@@ -185,12 +185,12 @@ function App() {
       </nav>
 
       <div className="flex">
-        <div className="w-64 bg-white h-screen border-r border-primary-100 p-4">
+        <div className="w-64 bg-primary-700 h-screen border-r border-primary-600 p-4">
           <div className="space-y-4">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'dashboard' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'dashboard' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Users className="w-5 h-5" />
@@ -199,7 +199,7 @@ function App() {
             <button
               onClick={() => setActiveTab('create')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'create' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'create' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <PlusCircle className="w-5 h-5" />
@@ -208,7 +208,7 @@ function App() {
             <button
               onClick={() => setActiveTab('datacenter')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'datacenter' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'datacenter' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Database className="w-5 h-5" />
@@ -217,7 +217,7 @@ function App() {
             <button
               onClick={() => setActiveTab('upload')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'upload' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'upload' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Upload className="w-5 h-5" />
@@ -226,7 +226,7 @@ function App() {
             <button
               onClick={() => setActiveTab('settings')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'settings' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'settings' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <Settings className="w-5 h-5" />
@@ -235,7 +235,7 @@ function App() {
             <button
               onClick={() => setActiveTab('docs')}
               className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'docs' ? 'bg-accent-100 text-accent-700' : 'text-gray-600 hover:bg-primary-50'
+                activeTab === 'docs' ? 'bg-secondary-150 text-primary-900' : 'text-white hover:bg-primary-600'
               }`}
             >
               <BookOpen className="w-5 h-5" />
@@ -247,7 +247,7 @@ function App() {
         <div className="flex-1 p-8">
           {activeTab === 'dashboard' && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Meine Agents</h1>
+              <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
               {!isKeyValid ? (
                 <div className="text-center py-12 bg-white border border-primary-100">
                   <Key className="mx-auto h-12 w-12 text-primary-300" />
@@ -258,7 +258,7 @@ function App() {
                   <div className="mt-6">
                     <button
                       onClick={() => setActiveTab('settings')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400"
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
                     >
                       <Settings className="w-5 h-5 mr-2" />
                       Zu den Einstellungen
@@ -273,7 +273,7 @@ function App() {
                   <div className="mt-6">
                     <button
                       onClick={() => setActiveTab('create')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400"
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
                     >
                       <PlusCircle className="w-5 h-5 mr-2" />
                       Neuen Agent erstellen
@@ -295,7 +295,7 @@ function App() {
 
           {activeTab === 'datacenter' && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Datencenter</h1>
+              <h1 className="text-2xl font-bold text-white mb-6">Datencenter</h1>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white p-6 border border-primary-100">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Globale Prompts</h2>
@@ -338,7 +338,7 @@ function App() {
                     </div>
                     <button
                       type="submit"
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400"
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
                     >
                       <MessageSquare className="w-5 h-5 mr-2" />
                       Prompt hinzufügen
@@ -397,7 +397,7 @@ function App() {
                     />
                     <label
                       htmlFor="file-upload-datacenter"
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400 cursor-pointer"
+                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover cursor-pointer"
                     >
                       <Upload className="w-5 h-5 mr-2" />
                       Dateien auswählen
@@ -440,7 +440,7 @@ function App() {
 
           {activeTab === 'upload' && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Dokumente</h1>
+              <h1 className="text-2xl font-bold text-white mb-6">Dokumente</h1>
               <div className="bg-white p-6 border border-primary-100">
                 <div
                   onDragEnter={handleDrag}
@@ -468,7 +468,7 @@ function App() {
                   />
                   <label
                     htmlFor="file-upload"
-                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400 cursor-pointer"
+                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover cursor-pointer"
                   >
                     <Upload className="w-5 h-5 mr-2" />
                     Dateien auswählen
@@ -510,7 +510,7 @@ function App() {
 
           {activeTab === 'settings' && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">API-Einstellungen</h1>
+              <h1 className="text-2xl font-bold text-white mb-6">API-Einstellungen</h1>
               <div className="bg-white p-6 border border-primary-100">
                 <form onSubmit={handleKeySubmit} className="space-y-6">
                   <div>
@@ -531,7 +531,7 @@ function App() {
                   <div>
                     <button
                       type="submit"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
                     >
                       API-Key speichern
                     </button>
@@ -548,7 +548,7 @@ function App() {
 
           {activeTab === 'create' && (
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Neuen Agent erstellen</h1>
+              <h1 className="text-2xl font-bold text-white mb-6">Neuen Agent erstellen</h1>
               {!isKeyValid ? (
                 <div className="text-center py-12 bg-white border border-primary-100">
                   <Key className="mx-auto h-12 w-12 text-primary-300" />
@@ -559,7 +559,7 @@ function App() {
                   <div className="mt-6">
                     <button
                       onClick={() => setActiveTab('settings')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400"
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
                     >
                       <Settings className="w-5 h-5 mr-2" />
                       Zu den Einstellungen
@@ -612,7 +612,7 @@ function App() {
                     <div>
                       <button
                         type="submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-500 bg-highlight-300 hover:bg-highlight-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
+                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
                       >
                         Agent erstellen
                       </button>
