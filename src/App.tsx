@@ -535,7 +535,7 @@ function App() {
                     key={msg.id}
                     className={`mb-3 p-3 max-w-[80%] ${
                       msg.sender === 'user'
-                        ? 'bg-primary-450 text-white ml-auto'
+                        ? 'bg-[#383640] text-white ml-auto'
                         : 'bg-secondary-150 text-primary-700 mr-auto'
                     }`}
                   >
@@ -547,7 +547,7 @@ function App() {
 
               <form
                 onSubmit={handleSendMessage}
-                className="flex items-center gap-2 p-4 bg-primary-700"
+                className="flex items-start gap-2 p-4 bg-primary-700"
               >
                 <textarea
                   value={chatInput}
