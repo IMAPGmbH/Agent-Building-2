@@ -10,18 +10,18 @@ export default {
           200: '#cccccc',
           300: '#b3b3b3',
           400: '#999999',
-          450: '#87868D', // New background color
-          500: '#000000',
+          450: '#87868D', // Page background
+          500: '#000000', // Base black
           600: '#000000',
-          700: '#242329', // New dark sidebar color
+          700: '#242329', // Dark sidebar
           800: '#000000',
           900: '#000000',
         },
         'secondary': {
           50: '#f2eaf6',
           100: '#e5d5ed',
-          150: '#DBC6DE', // New active sidebar item color
-          200: '#BC9BC8',
+          150: '#DBC6DE', // Active sidebar item
+          200: '#BC9BC8', // Color stripe
           300: '#ab82bc',
           400: '#9a69b0',
           500: '#82368C',
