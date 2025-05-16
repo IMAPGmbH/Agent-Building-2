@@ -1,0 +1,14 @@
+{
+  "agents": [
+    {
+      "id": "72921b74-c636-4215-962d-691dc30489c9",
+      "name": "Mein erster Backend Agent",
+      "description": "Dieser Agent wird von meinem neuen Backend verwaltet.",
+      "systemPrompt": "Du bist ein hilfreicher Test-Agent für das Backend.",
+      "configuration": {
+        "model": "Gemini 2.5 Pro (Google)"
+      },
+      "createdAt": "2025-05-16T15:55:32.563Z"
+    }
+  ]
+}
