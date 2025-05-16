@@ -529,17 +529,17 @@ function App() {
                 Chat mit: {selectedAgent.name}
               </h1>
 
-              <div className="flex-grow bg-white p-4 border border-primary-100 overflow-y-auto mb-4 rounded-md">
+              <div className="flex-grow bg-secondary-150 p-4 border border-primary-100 overflow-y-auto mb-4 rounded-md">
                 {messages.length === 0 && (
-                  <p className="text-gray-500 text-center">Beginne die Konversation...</p>
+                  <p className="text-primary-700 text-center">Beginne die Konversation...</p>
                 )}
                 {messages.map(msg => (
                   <div
                     key={msg.id}
                     className={`mb-3 p-3 rounded-lg max-w-[80%] ${
                       msg.sender === 'user'
-                        ? 'bg-imap-mint text-primary-900 ml-auto rounded-br-none'
-                        : 'bg-primary-100 text-gray-800 mr-auto rounded-bl-none'
+                        ? 'bg-primary-450 text-white ml-auto'
+                        : 'bg-secondary-150 text-primary-700 mr-auto border border-primary-400'
                     }`}
                   >
                     <p className="text-sm">{msg.text}</p>
