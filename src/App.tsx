@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Settings, Users, BookOpen, PlusCircle, Key, Upload, FileText, Trash2, Database, MessageSquare } from 'lucide-react';
+import { Bot, Settings, Users, PlusCircle, Key, Upload, FileText, Trash2, Database, MessageSquare } from 'lucide-react';
 import ImapLogo from './components/ImapLogo';
 
 interface Agent {
@@ -216,33 +216,6 @@ function App() {
               <Database className="w-5 h-5" />
               <span>Datencenter</span>
             </button>
-            <button
-              onClick={() => setActiveTab('upload')}
-              className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'upload' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
-              }`}
-            >
-              <Upload className="w-5 h-5" />
-              <span>Dokumente</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'settings' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
-              }`}
-            >
-              <Settings className="w-5 h-5" />
-              <span>Einstellungen</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('docs')}
-              className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'docs' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
-              }`}
-            >
-              <BookOpen className="w-5 h-5" />
-              <span>Dokumentation</span>
-            </button>
           </div>
         </div>
 
@@ -268,19 +241,8 @@ function App() {
                   </div>
                 </div>
               ) : agents.length === 0 ? (
-                <div className="text-center py-12 bg-white border border-primary-100">
-                  <Bot className="mx-auto h-12 w-12 text-primary-300" />
-                  <h3 className="mt-2 text-sm font-semibold text-gray-900">Keine Agents vorhanden</h3>
-                  <p className="mt-1 text-sm text-gray-500">Erstellen Sie Ihren ersten Agent, um loszulegen.</p>
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setActiveTab('create')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
-                    >
-                      <PlusCircle className="w-5 h-5 mr-2" />
-                      Neuen Agent erstellen
-                    </button>
-                  </div>
+                <div className="bg-white p-6 border border-primary-100">
+                  {/* PLATZHALTER: Hier wird später die Liste der Agents oder eine alternative Ansicht angezeigt */}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -290,6 +252,76 @@ function App() {
                       <p className="mt-2 text-sm text-gray-500">{agent.description}</p>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'create' && (
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-6">Neuen Agent erstellen</h1>
+              {!isKeyValid ? (
+                <div className="text-center py-12 bg-white border border-primary-100">
+                  <Key className="mx-auto h-12 w-12 text-primary-300" />
+                  <h3 className="mt-2 text-sm font-semibold text-gray-900">API-Key erforderlich</h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Bitte fügen Sie zuerst Ihren OpenAI API-Key in den Einstellungen hinzu.
+                  </p>
+                  <div className="mt-6">
+                    <button
+                      onClick={() => setActiveTab('settings')}
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
+                    >
+                      <Settings className="w-5 h-5 mr-2" />
+                      Zu den Einstellungen
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white p-6 border border-primary-100">
+                  <form className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Name des Agents:
+                      </label>
+                      <input
+                        type="text"
+                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
+                        placeholder="Wie soll dein Agent heißen?"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Kurzbeschreibung:
+                      </label>
+                      <textarea
+                        rows={3}
+                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
+                        placeholder="Was ist die Aufgabe des Agents?"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        KI-Modell:
+                      </label>
+                      {/* TODO: Backend-Integration für API-Key-Abruf und dynamische Modell-Liste. Aktuell statische Auswahl. */}
+                      <select
+                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-select"
+                      >
+                        <option>GPT-4o (OpenAI)</option>
+                        <option>Gemini 2.5 Pro (Google)</option>
+                        <option>Claude 3.7 Sonett (Anthropic)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
+                      >
+                        Agent erstellen
+                      </button>
+                    </div>
+                  </form>
                 </div>
               )}
             </div>
@@ -437,191 +469,6 @@ function App() {
                   )}
                 </div>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'upload' && (
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-6">Dokumente</h1>
-              <div className="bg-white p-6 border border-primary-100">
-                <div
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                  className={`border-2 border-dashed p-8 text-center ${
-                    dragActive ? 'border-highlight-400 bg-highlight-50' : 'border-gray-300'
-                  }`}
-                >
-                  <Upload className="mx-auto h-12 w-12 text-primary-300" />
-                  <p className="mt-2 text-sm font-semibold text-gray-900">
-                    Dateien hierher ziehen oder klicken zum Auswählen
-                  </p>
-                  <p className="mt-1 text-sm text-gray-500">
-                    PDF, DOC, DOCX, TXT bis zu 10MB
-                  </p>
-                  <input
-                    type="file"
-                    multiple
-                    onChange={handleFileInput}
-                    className="hidden"
-                    id="file-upload"
-                    accept=".pdf,.doc,.docx,.txt"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover cursor-pointer"
-                  >
-                    <Upload className="w-5 h-5 mr-2" />
-                    Dateien auswählen
-                  </label>
-                </div>
-
-                {uploadedFiles.length > 0 && (
-                  <div className="mt-8">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Hochgeladene Dokumente</h2>
-                    <div className="space-y-4">
-                      {uploadedFiles.map((file) => (
-                        <div
-                          key={file.id}
-                          className="flex items-center justify-between bg-primary-50 p-4 border border-highlight-200"
-                        >
-                          <div className="flex items-center">
-                            <FileText className="w-5 h-5 text-primary-400 mr-3" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                              <p className="text-sm text-gray-500">
-                                {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => deleteFile(file.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'settings' && (
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-6">API-Einstellungen</h1>
-              <div className="bg-white p-6 border border-primary-100">
-                <form onSubmit={handleKeySubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">OpenAI API-Key</label>
-                    <div className="mt-1 relative">
-                      <input
-                        type="password"
-                        value={openaiKey}
-                        onChange={(e) => setOpenaiKey(e.target.value)}
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
-                        placeholder="sk-..."
-                      />
-                    </div>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Ihr API-Key wird sicher in Ihrem Browser gespeichert und nicht an unsere Server übertragen.
-                    </p>
-                  </div>
-                  <div>
-                    <button
-                      type="submit"
-                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
-                    >
-                      API-Key speichern
-                    </button>
-                  </div>
-                  {isKeyValid && (
-                    <div className="mt-4 p-4 bg-green-50">
-                      <p className="text-green-700">✓ API-Key erfolgreich validiert</p>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'create' && (
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-6">Neuen Agent erstellen</h1>
-              {!isKeyValid ? (
-                <div className="text-center py-12 bg-white border border-primary-100">
-                  <Key className="mx-auto h-12 w-12 text-primary-300" />
-                  <h3 className="mt-2 text-sm font-semibold text-gray-900">API-Key erforderlich</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Bitte fügen Sie zuerst Ihren OpenAI API-Key in den Einstellungen hinzu.
-                  </p>
-                  <div className="mt-6">
-                    <button
-                      onClick={() => setActiveTab('settings')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover"
-                    >
-                      <Settings className="w-5 h-5 mr-2" />
-                      Zu den Einstellungen
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-white p-6 border border-primary-100">
-                  <form className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Name des Agents</label>
-                      <input
-                        type="text"
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-input"
-                        placeholder="z.B. Dokumentenanalyse-Agent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Beschreibung</label>
-                      <textarea
-                        rows={3}
-                        className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
-                        placeholder="Beschreiben Sie die Aufgaben und Fähigkeiten des Agents"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">GPT-4 Konfiguration</label>
-                      <div className="mt-1 p-4 bg-primary-50 space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Systemrolle</label>
-                          <textarea
-                            rows={2}
-                            className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-textarea"
-                            placeholder="Definieren Sie die Rolle und Aufgaben des AI-Assistenten"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Temperatur</label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="2"
-                            step="0.1"
-                            defaultValue="0.7"
-                            className="mt-1 block w-full"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <button
-                        type="submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-primary-900 bg-imap-mint hover:bg-imap-mintHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight-500"
-                      >
-                        Agent erstellen
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
             </div>
           )}
         </div>
