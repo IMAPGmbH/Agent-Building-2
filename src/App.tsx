@@ -163,10 +163,10 @@ function App() {
       {/* Navigation */}
       <nav className="bg-primary-500 border-b border-primary-600">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between h-16 px-8">
+          <div className="flex justify-between h-16 pl-6 pr-8">
             <div className="flex items-center gap-3">
               <ImapLogo />
-              <span className="font-rubik font-medium text-xl text-white tracking-tight">IMAP Agent Building</span>
+              <span className="font-sans font-normal text-xl text-white tracking-tight">IMAP Agent Building</span>
             </div>
             <div className="flex items-center">
               {isKeyValid ? (
