@@ -184,6 +184,8 @@ function App() {
         </div>
       </nav>
 
+      <div className="w-full h-2 bg-secondary-200"></div>
+
       <div className="flex">
         <div className="w-64 bg-primary-700 h-screen border-r border-primary-600 p-4">
           <div className="space-y-4">
@@ -244,7 +246,7 @@ function App() {
           </div>
         </div>
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 bg-primary-500">
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
