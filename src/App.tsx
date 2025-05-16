@@ -45,7 +45,7 @@ function App() {
     name: '', 
     description: '', 
     systemPrompt: '',
-    model: 'GPT-4o (OpenAI)' 
+    model: 'Gemini 2.5 Pro (Google)' 
   });
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -62,6 +62,23 @@ function App() {
     'Kommunikation',
     'Sonstiges'
   ];
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/agents');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAgents(data);
+      } catch (error) {
+        console.error("Fehler beim Laden der Agenten vom Backend:", error);
+      }
+    };
+
+    fetchAgents();
+  }, []);
 
   useEffect(() => {
     const savedFiles = localStorage.getItem('uploaded_files');
@@ -96,23 +113,50 @@ function App() {
     }
   }, [chatInput]);
 
-  const handleCreateAgentSubmit = (e: React.FormEvent) => {
+  const handleCreateAgentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newAgentData: Agent = {
-      id: Date.now().toString(),
-      name: newAgent.name,
-      description: newAgent.description,
-      systemPrompt: newAgent.systemPrompt,
-      configuration: {
-        model: newAgent.model
-      }
-    };
 
-    setAgents(prevAgents => [newAgentData, ...prevAgents]);
-    setActiveTab('dashboard');
-    setIsAgentsSubmenuOpen(true);
-    setNewAgent({ name: '', description: '', systemPrompt: '', model: 'GPT-4o (OpenAI)' });
+    if (!newAgent.name.trim() || !newAgent.description.trim()) {
+      alert("Name und Beschreibung des Agents dürfen nicht leer sein.");
+      return;
+    }
+
+    try {
+      const agentToCreate = {
+        name: newAgent.name,
+        description: newAgent.description,
+        systemPrompt: newAgent.systemPrompt,
+        configuration: { model: newAgent.model },
+      };
+
+      const response = await fetch('http://localhost:3001/api/agents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(agentToCreate),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+        throw new Error(errorData.message || `Fehler beim Erstellen des Agenten (Status: ${response.status})`);
+      }
+
+      const fetchAgentsResponse = await fetch('http://localhost:3001/api/agents');
+      if (!fetchAgentsResponse.ok) {
+        throw new Error(`HTTP error beim Neuladen der Agenten! status: ${fetchAgentsResponse.status}`);
+      }
+      const updatedAgents = await fetchAgentsResponse.json();
+      setAgents(updatedAgents);
+
+      setActiveTab('dashboard');
+      setIsAgentsSubmenuOpen(true);
+      setNewAgent({ name: '', description: '', systemPrompt: '', model: 'Gemini 2.5 Pro (Google)' });
+
+    } catch (error) {
+      console.error("Fehler beim Erstellen des Agenten:", error);
+      alert(`Ein Fehler ist aufgetreten: ${error.message}`);
+    }
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -406,9 +450,9 @@ function App() {
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-accent-500 focus:ring-accent-500 form-select"
                       required
                     >
-                      <option>GPT-4o (OpenAI)</option>
-                      <option>Gemini 2.5 Pro (Google)</option>
-                      <option>Claude 3.7 Sonett (Anthropic)</option>
+                      <option value="GPT-4o (OpenAI)" disabled>GPT-4o (OpenAI) - In Kürze</option>
+                      <option value="Gemini 2.5 Pro (Google)">Gemini 2.5 Pro (Google)</option>
+                      <option value="Claude 3.7 Sonett (Anthropic)" disabled>Claude 3.7 Sonett (Anthropic) - In Kürze</option>
                     </select>
                   </div>
                   <div>
@@ -578,7 +622,7 @@ function App() {
               {selectedAgent.systemPrompt && (
                 <div className="mb-4 bg-[#383640]">
                   <div
-                    className="flex justify-between items-center p-2 cursor-pointer hover:bg-opacity-75"
+                    className="flex justify-between items-center p-2 cursor-pointer bg-[#383640] hover:bg-opacity-75"
                     onClick={() => setIsSystemPromptVisible(!isSystemPromptVisible)}
                   >
                     <span className="text-sm font-medium text-white">Systemprompt</span>
@@ -648,6 +692,7 @@ function App() {
                 <button
                   type="submit"
                   className="p-2 bg-imap-mint text-primary-900 hover:bg-imap-mintHover"
+                
                 >
                   <Send className="w-5 h-5" />
                 </button>
