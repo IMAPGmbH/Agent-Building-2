@@ -46,6 +46,7 @@ function App() {
   const [chatInput, setChatInput] = useState('');
   
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const promptCategories = [
     'Allgemein',
@@ -66,6 +67,27 @@ function App() {
       setGlobalPrompts(JSON.parse(savedPrompts));
     }
   }, []);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const baseHeight = 24;
+      const maxHeight = 6 * baseHeight;
+
+      if (chatInput === '') {
+        textareaRef.current.style.height = `${baseHeight}px`;
+        textareaRef.current.style.overflowY = 'hidden';
+      } else {
+        textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+        if (scrollHeight > maxHeight) {
+          textareaRef.current.style.overflowY = 'auto';
+        } else {
+          textareaRef.current.style.overflowY = 'hidden';
+        }
+      }
+    }
+  }, [chatInput]);
 
   const handleCreateAgentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -550,8 +572,18 @@ function App() {
                 className="flex items-start gap-2 p-4 bg-primary-700"
               >
                 <textarea
+                  ref={textareaRef}
                   value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
+                  onChange={(e) => {
+                    setChatInput(e.target.value);
+                    if (textareaRef.current) {
+                      textareaRef.current.style.height = 'auto';
+                      const scrollHeight = textareaRef.current.scrollHeight;
+                      const maxHeight = 6 * 24;
+                      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+                      textareaRef.current.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+                    }
+                  }}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -559,8 +591,7 @@ function App() {
                     }
                   }}
                   placeholder="Deine Nachricht..."
-                  className="flex-grow p-2 border-0 resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea text-gray-900 bg-white"
-                  rows={1}
+                  className="flex-grow p-2 border-0 resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea text-sm text-gray-900 bg-white"
                 />
                 <button
                   type="submit"
