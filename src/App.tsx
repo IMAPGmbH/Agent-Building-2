@@ -576,9 +576,9 @@ function App() {
               </h1>
 
               {selectedAgent.systemPrompt && (
-                <div className="mb-4 bg-primary-700">
+                <div className="mb-4 bg-[#383640]">
                   <div
-                    className="flex justify-between items-center p-2 cursor-pointer hover:bg-primary-600"
+                    className="flex justify-between items-center p-2 cursor-pointer hover:bg-opacity-75"
                     onClick={() => setIsSystemPromptVisible(!isSystemPromptVisible)}
                   >
                     <span className="text-sm font-medium text-white">Systemprompt</span>
@@ -589,10 +589,12 @@ function App() {
                     )}
                   </div>
                   {isSystemPromptVisible && (
-                    <div className="p-3 bg-[#383640]">
-                      <p className="text-sm text-gray-200 whitespace-pre-wrap">
-                        {selectedAgent.systemPrompt}
-                      </p>
+                    <div className="bg-[#383640] p-1 pt-0">
+                      <div className="bg-primary-700 p-3">
+                        <p className="text-sm text-gray-200 whitespace-pre-wrap">
+                          {selectedAgent.systemPrompt}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
