@@ -51,6 +51,7 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isSystemPromptVisible, setIsSystemPromptVisible] = useState(false);
+  const [isAgentResponding, setIsAgentResponding] = useState(false);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -235,25 +236,67 @@ function App() {
     localStorage.setItem('global_prompts', JSON.stringify(updatedPrompts));
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (chatInput.trim() === '') return;
+    if (chatInput.trim() === '' || !selectedAgent) return;
+
+    const userInput = chatInput.trim();
 
     const userMessage: ChatMessage = {
       id: Math.random().toString(36).substr(2, 9) + '_user',
-      text: chatInput.trim(),
-      sender: 'user'
+      text: userInput,
+      sender: 'user',
     };
-
-    const agentResponse: ChatMessage = {
-      id: Math.random().toString(36).substr(2, 9) + '_agent',
-      text: `Echo: "${chatInput.trim()}" (Antwort von ${selectedAgent?.name || 'Demo Agent'})`,
-      sender: 'agent'
-    };
-
-    setMessages(prevMessages => [...prevMessages, userMessage, agentResponse]);
+    setMessages(prevMessages => [...prevMessages, userMessage]);
     setChatInput('');
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setIsAgentResponding(true);
+
+    const historyForBackend = messages.map(msg => ({ sender: msg.sender, text: msg.text }));
+
+    try {
+      const response = await fetch('http://localhost:3001/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userInput,
+          history: historyForBackend,
+          systemPrompt: selectedAgent.systemPrompt || '',
+          agentModel: selectedAgent.configuration?.model || 'Gemini 2.5 Pro (Google)',
+        }),
+      });
+
+      setIsAgentResponding(false);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `HTTP error! Status: ${response.status}` }));
+        throw new Error(errorData.message || `Fehler beim Senden der Nachricht (Status: ${response.status})`);
+      }
+
+      const data = await response.json();
+
+      if (data.reply) {
+        const agentResponse: ChatMessage = {
+          id: Math.random().toString(36).substr(2, 9) + '_agent',
+          text: data.reply,
+          sender: 'agent',
+        };
+        setMessages(prevMessages => [...prevMessages, agentResponse]);
+      } else {
+        throw new Error("Keine Antwort (reply) vom Backend erhalten.");
+      }
+
+    } catch (error) {
+      setIsAgentResponding(false);
+      console.error("Fehler bei der Chat-Kommunikation:", error);
+      const errorResponse: ChatMessage = {
+        id: Math.random().toString(36).substr(2, 9) + '_agent_error',
+        text: `Entschuldigung, ein Fehler ist aufgetreten: ${error.message}`,
+        sender: 'agent',
+      };
+      setMessages(prevMessages => [...prevMessages, errorResponse]);
+    }
   };
 
   useEffect(() => {
@@ -660,6 +703,15 @@ function App() {
                     <p className="text-sm">{msg.text}</p>
                   </div>
                 ))}
+
+                {isAgentResponding && (
+                  <div className="flex justify-start mb-3">
+                    <div className="bg-secondary-150 text-primary-700 p-3 max-w-[80%] mr-auto">
+                      <p className="text-sm italic">Agent denkt nach...</p>
+                    </div>
+                  </div>
+                )}
+
                 <div ref={chatEndRef} />
               </div>
 
@@ -692,7 +744,6 @@ function App() {
                 <button
                   type="submit"
                   className="p-2 bg-imap-mint text-primary-900 hover:bg-imap-mintHover"
-                
                 >
                   <Send className="w-5 h-5" />
                 </button>
