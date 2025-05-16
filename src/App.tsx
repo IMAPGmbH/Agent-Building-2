@@ -529,14 +529,14 @@ function App() {
                 Chat mit: {selectedAgent.name}
               </h1>
 
-              <div className="flex-grow bg-secondary-150 p-4 border border-primary-100 overflow-y-auto mb-4 rounded-md">
+              <div className="flex-grow bg-primary-700 p-4 border border-primary-100 overflow-y-auto mb-4 rounded-none">
                 {messages.length === 0 && (
-                  <p className="text-primary-700 text-center">Beginne die Konversation...</p>
+                  <p className="text-gray-400 text-center">Beginne die Konversation...</p>
                 )}
                 {messages.map(msg => (
                   <div
                     key={msg.id}
-                    className={`mb-3 p-3 rounded-lg max-w-[80%] ${
+                    className={`mb-3 p-3 rounded-none max-w-[80%] ${
                       msg.sender === 'user'
                         ? 'bg-primary-450 text-white ml-auto'
                         : 'bg-secondary-150 text-primary-700 mr-auto border border-primary-400'
@@ -553,7 +553,7 @@ function App() {
 
               <form
                 onSubmit={handleSendMessage}
-                className="flex items-center gap-2 p-4 bg-white border border-primary-100 rounded-md"
+                className="flex items-center gap-2 p-4 bg-primary-700 border border-primary-100 rounded-none"
               >
                 <textarea
                   value={chatInput}
@@ -565,12 +565,12 @@ function App() {
                     }
                   }}
                   placeholder="Deine Nachricht..."
-                  className="flex-grow p-2 border border-gray-300 rounded-md resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea"
+                  className="flex-grow p-2 border border-gray-300 rounded-none resize-none focus:ring-imap-turquoise focus:border-imap-turquoise form-textarea text-gray-900 bg-white"
                   rows={1}
                 />
                 <button
                   type="submit"
-                  className="p-2 bg-imap-mint text-primary-900 rounded-md hover:bg-imap-mintHover"
+                  className="p-2 bg-imap-mint text-primary-900 rounded-none hover:bg-imap-mintHover"
                 >
                   <Send className="w-5 h-5" />
                 </button>
