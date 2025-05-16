@@ -2,43 +2,42 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fs from 'fs/promises'; // Wir verwenden die Promise-basierte Version von fs
+import fs from 'fs/promises';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid'; // Importiere uuid für eindeutige IDs
+import { v4 as uuidv4 } from 'uuid';
+
+// Importiere das Google Generative AI SDK
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 
 // Lade Umgebungsvariablen aus .env
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Nutze den Port aus .env oder default 3001
+const PORT = process.env.PORT || 3001;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // Lade den API Key
 
 // Middleware
-app.use(cors()); // Erlaube Cross-Origin Requests (wichtig für lokale Entwicklung)
-app.use(express.json()); // Erlaube dem Server, JSON-Daten in Request-Bodies zu lesen
+app.use(cors());
+app.use(express.json());
 
-// Pfad zur unserer einfachen JSON-Datenbank
-const DB_PATH = path.join(process.cwd(), 'db.json'); // Stellt sicher, dass der Pfad korrekt ist, egal von wo das Skript gestartet wird
+const DB_PATH = path.join(process.cwd(), 'db.json');
 
 // --- Hilfsfunktionen für die Datenbank (db.json) ---
-
-// Funktion zum Lesen der Datenbank
 async function readDB() {
   try {
     const data = await fs.readFile(DB_PATH, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
-    // Wenn die Datei nicht existiert oder leer ist, initialisiere sie
     if (error.code === 'ENOENT' || error.name === 'SyntaxError') {
       console.warn('db.json nicht gefunden oder fehlerhaft, initialisiere neu.');
       await writeDB({ agents: [] });
       return { agents: [] };
     }
     console.error('Fehler beim Lesen der Datenbank:', error);
-    throw error; // Wirft den Fehler weiter, damit API-Endpunkte darauf reagieren können
+    throw error;
   }
 }
 
-// Funktion zum Schreiben in die Datenbank
 async function writeDB(data) {
   try {
     await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
@@ -54,7 +53,7 @@ async function writeDB(data) {
 app.get('/api/agents', async (req, res) => {
   try {
     const db = await readDB();
-    res.status(200).json(db.agents || []); // Stelle sicher, dass immer ein Array zurückgegeben wird
+    res.status(200).json(db.agents || []);
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Abrufen der Agenten.', error: error.message });
   }
@@ -65,17 +64,19 @@ app.post('/api/agents', async (req, res) => {
   try {
     const { name, description, systemPrompt, configuration } = req.body;
 
-    // Einfache Validierung
     if (!name || !description || !configuration || !configuration.model) {
       return res.status(400).json({ message: 'Name, Beschreibung und Modell-Konfiguration sind erforderlich.' });
     }
 
     const db = await readDB();
+    if (!db.agents) {
+        db.agents = [];
+    }
     const newAgent = {
-      id: uuidv4(), // Generiere eine eindeutige ID
+      id: uuidv4(),
       name,
       description,
-      systemPrompt: systemPrompt || '', // Optional, default ist leerer String
+      systemPrompt: systemPrompt || '',
       configuration,
       createdAt: new Date().toISOString(),
     };
@@ -83,9 +84,82 @@ app.post('/api/agents', async (req, res) => {
     db.agents.push(newAgent);
     await writeDB(db);
 
-    res.status(201).json(newAgent); // 201 Created
+    res.status(201).json(newAgent);
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Erstellen des Agenten.', error: error.message });
+  }
+});
+
+// POST /api/chat - Nachricht an Gemini senden
+app.post('/api/chat', async (req, res) => {
+  if (!GEMINI_API_KEY) {
+    console.error("GEMINI_API_KEY ist nicht konfiguriert!"); // Wichtig für Debugging
+    return res.status(500).json({ message: 'Gemini API Key nicht konfiguriert.' });
+  }
+
+  try {
+    const { message, history, systemPrompt, agentModel } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ message: 'Keine Nachricht übermittelt.' });
+    }
+    // Die Prüfung auf agentModel.toLowerCase().includes('gemini') ist für den allgemeinen Chat-Endpunkt vielleicht zu restriktiv,
+    // aber für den Moment lassen wir sie, da wir uns auf Gemini konzentrieren.
+    if (!agentModel || !agentModel.toLowerCase().includes('gemini')) {
+        console.warn(`Ungültiges oder nicht unterstütztes Agentenmodell empfangen: ${agentModel}`);
+        return res.status(400).json({ message: 'Ungültiges oder nicht unterstütztes Agentenmodell für diesen Endpunkt.' });
+    }
+
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    // Hier verwenden wir ein robustes Modell, das Chat unterstützt.
+    // "gemini-1.5-flash-latest" ist gut für Geschwindigkeit und Kosten.
+    // "gemini-1.5-pro-latest" ist leistungsstärker.
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+
+    const chatHistoryForAPI = [];
+    if (history && Array.isArray(history)) { // Sicherstellen, dass history ein Array ist
+      history.forEach(msg => {
+        if (msg && msg.sender && msg.text) { // Grundlegende Überprüfung der Nachrichtenstruktur
+          chatHistoryForAPI.push({
+            role: msg.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.text }],
+          });
+        }
+      });
+    }
+
+    const chat = model.startChat({
+      history: chatHistoryForAPI,
+      systemInstruction: systemPrompt ? { role: "system", parts: [{text: systemPrompt}] } : undefined,
+      generationConfig: {
+        // maxOutputTokens: 1000, // Optional: Passe dies bei Bedarf an
+      },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+      ],
+    });
+
+    console.log(`Sende Nachricht an Gemini: "${message}" mit Systemprompt: "${systemPrompt ? systemPrompt.substring(0,50)+'...' : 'Keiner'}" und ${chatHistoryForAPI.length} Nachrichten im Verlauf.`);
+
+    const result = await chat.sendMessage(message);
+    const response = result.response;
+
+    if (!response) {
+        console.error("Keine Antwort von der Gemini API erhalten.");
+        throw new Error("Keine Antwort von der Gemini API erhalten.");
+    }
+
+    const text = response.text();
+    console.log(`Antwort von Gemini empfangen: "${text ? text.substring(0,50)+'...' : 'Leere Antwort'}"`);
+
+    res.status(200).json({ reply: text });
+
+  } catch (error) {
+    console.error('Fehler bei der Kommunikation mit der Gemini API oder bei der Verarbeitung:', error);
+    res.status(500).json({ message: 'Fehler bei der Chat-Verarbeitung.', error: error.message || error.toString() });
   }
 });
 

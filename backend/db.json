@@ -9,6 +9,16 @@
         "model": "Gemini 2.5 Pro (Google)"
       },
       "createdAt": "2025-05-16T15:55:32.563Z"
+    },
+    {
+      "id": "a85c8009-b2cb-4ca5-886a-b1e9c4df59d3",
+      "name": "Hans August",
+      "description": "Er ist ein August",
+      "systemPrompt": "Du bist ein August",
+      "configuration": {
+        "model": "Gemini 2.5 Pro (Google)"
+      },
+      "createdAt": "2025-05-16T16:28:35.444Z"
     }
   ]
 }
