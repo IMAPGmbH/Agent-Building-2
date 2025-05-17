@@ -315,7 +315,7 @@ function App() {
       <div className="w-full h-1.5 bg-secondary-200 fixed top-16 left-0 z-50"></div>
 
       <div className="flex mt-[4.375rem]">
-        <div className="w-64 bg-primary-700 border-r border-primary-600 p-4 fixed top-[4.375rem] left-0 h-[calc(100vh-4.375rem)] overflow-y-auto">
+        <div className="w-64 bg-primary-700 p-4 fixed top-[4.375rem] left-0 h-[calc(100vh-4.375rem)] overflow-y-auto">
           <div className="space-y-4">
             <button
               onClick={() => {
@@ -697,6 +697,7 @@ function App() {
                   onChange={(e) => {
                     setChatInput(e.target.value);
                     if (textareaRef.current) {
+                      
                       textareaRef.current.style.height = 'auto';
                       const scrollHeight = textareaRef.current.scrollHeight;
                       const maxHeight = 6 * 24;
