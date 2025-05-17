@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare, ChevronDown, ChevronRight, Send } from 'lucide-react';
+import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSquare, ChevronDown, ChevronRight, Send, Settings } from 'lucide-react';
 import ImapLogo from './components/ImapLogo';
+import DesignAdminPage from './components/admin/DesignAdminPage';
 
 interface Agent {
   id: string;
@@ -363,6 +364,7 @@ function App() {
               <PlusCircle className="w-5 h-5" />
               <span>Neuer Agent</span>
             </button>
+
             <button
               onClick={() => setActiveTab('datacenter')}
               className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
@@ -371,6 +373,16 @@ function App() {
             >
               <Database className="w-5 h-5" />
               <span>Datencenter</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('designAdmin')}
+              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
+                activeTab === 'designAdmin' ? 'bg-sidebar-active-bg text-sidebar-active-text' : 'text-sidebar-text hover:bg-sidebar-hover-bg'
+              }`}
+            >
+              <Settings className="w-5 h-5" />
+              <span>Design Admin</span>
             </button>
           </div>
         </div>
@@ -727,6 +739,13 @@ function App() {
             <div>
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Chat</h1>
               <p className="text-custom-body font-custom-body-weight text-text-on-dark">Bitte wähle zuerst einen Agenten aus.</p>
+            </div>
+          )}
+
+          {activeTab === 'designAdmin' && (
+            <div>
+              <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Design Administration</h1>
+              <DesignAdminPage />
             </div>
           )}
         </div>
