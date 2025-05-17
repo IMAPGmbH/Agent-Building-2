@@ -3,6 +3,117 @@ import { Bot, Users, PlusCircle, Upload, FileText, Trash2, Database, MessageSqua
 import ImapLogo from './components/ImapLogo';
 import DesignAdminPage from './components/admin/DesignAdminPage';
 
+// Helper functions for pt/rem conversion
+const ptToRem = (pt: number): string => `${(pt / 12).toFixed(4)}rem`;
+const remToPt = (rem: string): number => {
+  const numericValue = parseFloat(rem);
+  if (isNaN(numericValue)) return 12;
+  return parseFloat((numericValue * 12).toFixed(2));
+};
+
+interface ColorSetting {
+  label: string;
+  variableName: string;
+  description?: string;
+}
+
+interface FontSetting {
+  label: string;
+  sizeVariable: string;
+  weightVariable: string;
+  defaultPtSize: number;
+  defaultWeight: string;
+  description?: string;
+}
+
+const editableColorSettings: ColorSetting[] = [
+  { label: 'Seitenhintergrund', variableName: '--color-page-bg', description: 'Haupt-Hintergrundfarbe der gesamten Anwendung.' },
+  { label: 'Helle Oberfläche (z.B. Karten)', variableName: '--color-surface-light', description: 'Hintergrund für helle Inhaltselemente wie Karten, Modals.' },
+  { label: 'Dunkle Oberfläche (z.B. Nav)', variableName: '--color-surface-dark', description: 'Hintergrund für dunkle UI-Bereiche wie die Hauptnavigation.' },
+  { label: 'Text auf dunklem Hintergrund', variableName: '--color-text-on-dark', description: 'Standard-Textfarbe auf dunklen Oberflächen.' },
+  { label: 'Text auf hellem Hintergrund', variableName: '--color-text-on-light', description: 'Standard-Textfarbe auf hellen Oberflächen.' },
+  { label: 'Sidebar Hintergrund', variableName: '--color-sidebar-bg', description: 'Hintergrundfarbe der Sidebar.' },
+  { label: 'Sidebar Text', variableName: '--color-sidebar-text', description: 'Textfarbe in der Sidebar.' },
+  { label: 'Sidebar Aktives Item Hintergrund', variableName: '--color-sidebar-active-bg', description: 'Hintergrund des aktiven/ausgewählten Items in der Sidebar.' },
+  { label: 'Sidebar Aktives Item Text', variableName: '--color-sidebar-active-text', description: 'Textfarbe des aktiven/ausgewählten Items in der Sidebar.' },
+  { label: 'Akzentstreifen (unter Nav)', variableName: '--color-accent-stripe', description: 'Farbe des Akzentstreifens unter der Hauptnavigation.' },
+  { label: 'Button Primär Hintergrund', variableName: '--color-button-primary-bg', description: 'Hintergrundfarbe für primäre Buttons.' },
+  { label: 'Button Primär Text', variableName: '--color-button-primary-text', description: 'Textfarbe für primäre Buttons.' },
+  { label: 'Button Primär Hover Hintergrund', variableName: '--color-button-primary-hover-bg', description: 'Hintergrundfarbe für primäre Buttons beim Hover.' },
+  { label: 'Link Text', variableName: '--color-link-text', description: 'Standardfarbe für Hyperlinks.' },
+  { label: 'Chat: Nutzer Nachricht Hintergrund', variableName: '--color-chat-user-message-bg' },
+  { label: 'Chat: Nutzer Nachricht Text', variableName: '--color-chat-user-message-text' },
+  { label: 'Chat: Agent Nachricht Hintergrund', variableName: '--color-chat-agent-message-bg' },
+  { label: 'Chat: Agent Nachricht Text', variableName: '--color-chat-agent-message-text' },
+];
+
+const editableFontSettings: FontSetting[] = [
+  {
+    label: 'Sidebar Navigation',
+    sizeVariable: '--font-size-sidebar-nav-item',
+    weightVariable: '--font-weight-sidebar-nav-item',
+    defaultPtSize: 12,
+    defaultWeight: '400',
+    description: 'Schrift für Menüpunkte in der seitlichen Navigation.'
+  },
+  {
+    label: 'Fließtext (Body)',
+    sizeVariable: '--font-size-body',
+    weightVariable: '--font-weight-body',
+    defaultPtSize: 12,
+    defaultWeight: '400',
+    description: 'Allgemeiner Text für Beschreibungen, Paragraphen etc.'
+  },
+  {
+    label: 'Überschrift H1',
+    sizeVariable: '--font-size-h1',
+    weightVariable: '--font-weight-h1',
+    defaultPtSize: 22.5,
+    defaultWeight: '700',
+    description: 'Größte Überschrift auf den Seiten.'
+  },
+  {
+    label: 'Überschrift H2',
+    sizeVariable: '--font-size-h2',
+    weightVariable: '--font-weight-h2',
+    defaultPtSize: 18,
+    defaultWeight: '600',
+    description: 'Zweitgrößte Überschrift.'
+  },
+  {
+    label: 'Überschrift H3',
+    sizeVariable: '--font-size-h3',
+    weightVariable: '--font-weight-h3',
+    defaultPtSize: 15,
+    defaultWeight: '600',
+    description: 'Drittgrößte Überschrift.'
+  },
+  {
+    label: 'Chat Nachrichten Text',
+    sizeVariable: '--font-size-chat-message',
+    weightVariable: '--font-weight-chat-message',
+    defaultPtSize: 10.5,
+    defaultWeight: '400',
+    description: 'Text innerhalb der Chatblasen.'
+  },
+  {
+    label: 'Chat Eingabefeld Text',
+    sizeVariable: '--font-size-chat-input',
+    weightVariable: '--font-weight-chat-input',
+    defaultPtSize: 10.5,
+    defaultWeight: '400',
+    description: 'Text im Chat-Eingabefeld.'
+  },
+  {
+    label: 'Button Text',
+    sizeVariable: '--font-size-button',
+    weightVariable: '--font-weight-button',
+    defaultPtSize: 10.5,
+    defaultWeight: '500',
+    description: 'Text auf Standard-Buttons.'
+  },
+];
+
 interface Agent {
   id: string;
   name: string;
@@ -53,6 +164,7 @@ function App() {
   const [chatInput, setChatInput] = useState('');
   const [isSystemPromptVisible, setIsSystemPromptVisible] = useState(false);
   const [isAgentResponding, setIsAgentResponding] = useState(false);
+  const [areSettingsApplied, setAreSettingsApplied] = useState(false);
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -64,6 +176,47 @@ function App() {
     'Kommunikation',
     'Sonstiges'
   ];
+
+  useEffect(() => {
+    const applyDesignSettings = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/design-settings');
+        if (!response.ok) {
+          console.warn(`Design-Einstellungen konnten nicht vom Server geladen werden: ${response.statusText}. Standard-CSS-Werte werden verwendet.`);
+          setAreSettingsApplied(true);
+          return;
+        }
+        const savedSettings = await response.json();
+
+        if (savedSettings && savedSettings.colors && savedSettings.fontSizesPt && savedSettings.fontWeights) {
+          Object.entries(savedSettings.colors).forEach(([variableName, value]) => {
+            if (typeof value === 'string') {
+              document.documentElement.style.setProperty(variableName, value);
+            }
+          });
+
+          Object.entries(savedSettings.fontSizesPt).forEach(([variableName, ptValue]) => {
+            if (typeof ptValue === 'number') {
+              document.documentElement.style.setProperty(variableName, ptToRem(ptValue));
+            }
+          });
+
+          Object.entries(savedSettings.fontWeights).forEach(([variableName, weightValue]) => {
+            if (typeof weightValue === 'string') {
+              document.documentElement.style.setProperty(variableName, weightValue);
+            }
+          });
+          console.log('Design-Einstellungen global in App.tsx angewendet.');
+        }
+      } catch (error) {
+        console.error('Fehler beim globalen Laden/Anwenden der Design-Einstellungen in App.tsx:', error);
+      } finally {
+        setAreSettingsApplied(true);
+      }
+    };
+
+    applyDesignSettings();
+  }, []);
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -304,6 +457,12 @@ function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  if (!areSettingsApplied) {
+    return <div className="min-h-screen bg-page-bg flex items-center justify-center text-text-on-dark">
+      <div className="text-lg">Lade App-Styles...</div>
+    </div>;
+  }
+
   return (
     <div className="min-h-screen bg-page-bg">
       <nav className="bg-surface-dark fixed top-0 left-0 w-full z-50 h-16 flex justify-between items-center px-6">
@@ -347,7 +506,7 @@ function App() {
                       setMessages([]);
                       setIsSystemPromptVisible(false);
                     }}
-                    className="flex items-center space-x-2 w-full p-1.5 text-custom-sidebar-nav font-custom-sidebar-nav text-text-muted-on-dark hover:bg-sidebar-hover-bg hover:text-sidebar-text rounded-md"
+                    className="flex items-center space-x-2 w-full p-1.5 text-custom-sidebar-nav font-custom-sidebar-nav text-text-muted-on-dark hover:bg-sidebar-hover-bg"
                   >
                     <span>- {agent.name}</span>
                   </button>
@@ -400,7 +559,7 @@ function App() {
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {agents.map((agent) => (
-                    <div key={agent.id} className="bg-surface-light p-6 border border-primary-100 hover:border-highlight-300 transition-colors duration-200 rounded-lg shadow">
+                    <div key={agent.id} className="bg-surface-light p-6 border border-primary-100 hover:border-highlight-300 transition-colors duration-200 shadow">
                       <h3 className="text-custom-h3 font-custom-h3-weight text-text-on-light">{agent.name}</h3>
                       <p className="mt-2 text-custom-body font-custom-body-weight text-text-muted-on-light truncate">{agent.description}</p>
                       <div className="mt-4">

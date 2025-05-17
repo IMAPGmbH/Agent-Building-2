@@ -120,87 +120,29 @@ const DesignAdminPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    const fetchAndApplySettings = async () => {
-      setIsLoading(true);
-      setLoadError(null);
-      try {
-        const response = await fetch('http://localhost:3001/api/design-settings');
-        if (!response.ok) {
-          throw new Error(`Fehler beim Laden vom Server: ${response.statusText}`);
-        }
-        const savedSettings = await response.json();
+    setIsLoading(true);
+    const rootStyles = getComputedStyle(document.documentElement);
+    
+    const currentColors: Record<string, string> = {};
+    editableColorSettings.forEach(setting => {
+      const value = rootStyles.getPropertyValue(setting.variableName).trim();
+      currentColors[setting.variableName] = value.startsWith('#') ? value : '#000000';
+    });
+    setColorValues(currentColors);
 
-        if (savedSettings && savedSettings.colors && savedSettings.fontSizesPt && savedSettings.fontWeights) {
-          console.log('Geladene Einstellungen vom Backend:', savedSettings);
-          const loadedColors: Record<string, string> = {};
-          editableColorSettings.forEach(setting => {
-            const backendValue = savedSettings.colors[setting.variableName];
-            const valueToApply = backendValue || getComputedStyle(document.documentElement).getPropertyValue(setting.variableName).trim() || '#000000';
-            document.documentElement.style.setProperty(setting.variableName, valueToApply);
-            loadedColors[setting.variableName] = valueToApply;
-          });
-          setColorValues(loadedColors);
+    const currentFontSizesPt: Record<string, number> = {};
+    const currentFontWeights: Record<string, string> = {};
+    editableFontSettings.forEach(setting => {
+      const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
+      currentFontSizesPt[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
+      
+      const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
+      currentFontWeights[setting.weightVariable] = (weight === '400' || weight === '600') ? weight : setting.defaultWeight;
+    });
+    setFontSizesPt(currentFontSizesPt);
+    setFontWeights(currentFontWeights);
 
-          const loadedFontSizesPt: Record<string, number> = {};
-          editableFontSettings.forEach(setting => {
-            const backendValuePt = savedSettings.fontSizesPt[setting.sizeVariable];
-            let valueToApplyRem: string;
-            let ptValueForState: number;
-
-            if (typeof backendValuePt === 'number') {
-              valueToApplyRem = ptToRem(backendValuePt);
-              ptValueForState = backendValuePt;
-            } else {
-              const cssVarRem = getComputedStyle(document.documentElement).getPropertyValue(setting.sizeVariable).trim();
-              ptValueForState = cssVarRem ? remToPt(cssVarRem) : setting.defaultPtSize;
-              valueToApplyRem = cssVarRem || ptToRem(setting.defaultPtSize);
-            }
-            document.documentElement.style.setProperty(setting.sizeVariable, valueToApplyRem);
-            loadedFontSizesPt[setting.sizeVariable] = ptValueForState;
-          });
-          setFontSizesPt(loadedFontSizesPt);
-
-          const loadedFontWeights: Record<string, string> = {};
-          editableFontSettings.forEach(setting => {
-            const backendValue = savedSettings.fontWeights[setting.weightVariable];
-            const valueToApply = (backendValue === '400' || backendValue === '600') 
-              ? backendValue 
-              : (getComputedStyle(document.documentElement).getPropertyValue(setting.weightVariable).trim() || setting.defaultWeight);
-            document.documentElement.style.setProperty(setting.weightVariable, valueToApply);
-            loadedFontWeights[setting.weightVariable] = (valueToApply === '400' || valueToApply === '600') ? valueToApply : setting.defaultWeight;
-          });
-          setFontWeights(loadedFontWeights);
-          
-        } else {
-          throw new Error("Unvollständige Daten vom Backend, lade Fallback-Werte.");
-        }
-      } catch (error) {
-        console.error('Fehler beim Laden der Design-Einstellungen vom Backend, verwende CSS-Fallback:', error);
-        setLoadError(error instanceof Error ? error.message : String(error));
-        const rootStyles = getComputedStyle(document.documentElement);
-        const fallbackColors: Record<string, string> = {};
-        editableColorSettings.forEach(setting => {
-          const value = rootStyles.getPropertyValue(setting.variableName).trim();
-          fallbackColors[setting.variableName] = value.startsWith('#') ? value : '#000000';
-        });
-        setColorValues(fallbackColors);
-
-        const fallbackFontSizes: Record<string, number> = {};
-        const fallbackFontWeights: Record<string, string> = {};
-        editableFontSettings.forEach(setting => {
-          const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
-          fallbackFontSizes[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
-          const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
-          fallbackFontWeights[setting.weightVariable] = (weight === '400' || weight === '600') ? weight : setting.defaultWeight;
-        });
-        setFontSizesPt(fallbackFontSizes);
-        setFontWeights(fallbackFontWeights);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAndApplySettings();
+    setIsLoading(false);
   }, []);
 
   const handleColorChange = (variableName: string, value: string) => {
@@ -370,7 +312,8 @@ const DesignAdminPage: React.FC = () => {
           disabled={isSaving || isLoading}
           className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg disabled:opacity-50"
         >
-          {isSaving ? 'Speichert...' : 'Einstellungen speichern'}
+          {isSaving ? '
+Speichert...' : 'Einstellungen speichern'}
         </button>
         {saveError && (
           <div className="mt-2 p-2 text-sm bg-red-100 text-red-700 border border-red-400">
