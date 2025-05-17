@@ -40,7 +40,7 @@ const editableColorSettings: ColorSetting[] = [
   { label: 'Chat: Nutzer Nachricht Hintergrund', variableName: '--color-chat-user-message-bg' },
   { label: 'Chat: Nutzer Nachricht Text', variableName: '--color-chat-user-message-text' },
   { label: 'Chat: Agent Nachricht Hintergrund', variableName: '--color-chat-agent-message-bg' },
-  { label: 'Chat: Agent Nachricht Text', variableName: '--color-chat-agent-message-text' },
+  { label: 'Chat: Agent Nachricht Text', variableName: '--color-chat-agent-message-text' }
 ];
 
 const DesignAdminPage: React.FC = () => {
@@ -116,7 +116,7 @@ const DesignAdminPage: React.FC = () => {
       defaultPtSize: 10.5,
       defaultWeight: '500',
       description: 'Text auf Standard-Buttons.'
-    },
+    }
   ];
 
   useEffect(() => {
@@ -312,8 +312,7 @@ const DesignAdminPage: React.FC = () => {
           disabled={isSaving || isLoading}
           className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg disabled:opacity-50"
         >
-          {isSaving ? '
-Speichert...' : 'Einstellungen speichern'}
+          {isSaving ? 'Speichert...' : 'Einstellungen speichern'}
         </button>
         {saveError && (
           <div className="mt-2 p-2 text-sm bg-red-100 text-red-700 border border-red-400">
