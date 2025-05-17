@@ -19,6 +19,61 @@
         "model": "Gemini 2.5 Pro (Google)"
       },
       "createdAt": "2025-05-16T16:28:35.444Z"
+    },
+    {
+      "id": "29bfb79b-254b-4d5f-8876-8710c7fed98d",
+      "name": "Syrakus",
+      "description": "Herakles",
+      "systemPrompt": "Herakles von Syrakus bist du. Du antwortest auf alles \"Herakles! Herakles!\"",
+      "configuration": {
+        "model": "Gemini 2.5 Pro (Google)"
+      },
+      "createdAt": "2025-05-16T23:46:51.046Z"
     }
-  ]
+ ],
+  "designSettings": {
+    "colors": {
+      "--color-page-bg": "#383640",
+      "--color-surface-light": "#FFFFFF",
+      "--color-surface-dark": "#242329",
+      "--color-text-on-dark": "#FFFFFF",
+      "--color-text-on-light": "#000000",
+      "--color-sidebar-bg": "#242329",
+      "--color-sidebar-text": "#FFFFFF",
+      "--color-sidebar-active-bg": "#DBC6DE",
+      "--color-sidebar-active-text": "#000000",
+      "--color-accent-stripe": "#BC9BC8",
+      "--color-button-primary-bg": "#A0F0C3",
+      "--color-button-primary-text": "#12434D",
+      "--color-button-primary-hover-bg": "#90E0B3",
+      "--color-link-text": "#00A89E",
+      "--color-chat-user-message-bg": "#383640",
+      "--color-chat-user-message-text": "#FFFFFF",
+      "--color-chat-agent-message-bg": "#DBC6DE",
+      "--color-chat-agent-message-text": "#242329"
+      
+    },
+    "fontSizesPt": {
+      "--font-size-sidebar-nav-item": 12,
+      "--font-size-body": 12,
+      "--font-size-h1": 22.5,
+      "--font-size-h2": 18,
+      "--font-size-h3": 15,
+      "--font-size-chat-message": 10.5,
+      "--font-size-chat-input": 10.5,
+      "--font-size-button": 10.5
+      
+    },
+    "fontWeights": {
+      "--font-weight-sidebar-nav-item": "400",
+      "--font-weight-body": "400",
+      "--font-weight-h1": "700",
+      "--font-weight-h2": "600",
+      "--font-weight-h3": "600",
+      "--font-weight-chat-message": "400",
+      "--font-weight-chat-input": "400",
+      "--font-weight-button": "500"
+      
+    }
+  }
 }
