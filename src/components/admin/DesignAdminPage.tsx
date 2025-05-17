@@ -6,11 +6,10 @@ interface ColorSetting {
   description?: string;
 }
 
-// Hilfsfunktionen für Pt <-> Rem Umrechnung (Basis: 1rem = 12pt oder 16px)
 const ptToRem = (pt: number): string => `${(pt / 12).toFixed(4)}rem`;
 const remToPt = (rem: string): number => {
   const numericValue = parseFloat(rem);
-  if (isNaN(numericValue)) return 12; // Fallback, falls CSS-Wert nicht lesbar
+  if (isNaN(numericValue)) return 12;
   return parseFloat((numericValue * 12).toFixed(2));
 };
 
@@ -49,6 +48,9 @@ const DesignAdminPage: React.FC = () => {
   const [fontSizesPt, setFontSizesPt] = useState<Record<string, number>>({});
   const [fontWeights, setFontWeights] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const editableFontSettings: FontSetting[] = [
     {
@@ -98,7 +100,6 @@ const DesignAdminPage: React.FC = () => {
       defaultPtSize: 10.5,
       defaultWeight: '400',
       description: 'Text innerhalb der Chatblasen.'
-    
     },
     {
       label: 'Chat Eingabefeld Text',
@@ -119,32 +120,91 @@ const DesignAdminPage: React.FC = () => {
   ];
 
   useEffect(() => {
-    const rootStyles = getComputedStyle(document.documentElement);
-    const initialColorVals: Record<string, string> = {};
-    editableColorSettings.forEach(setting => {
-      const value = rootStyles.getPropertyValue(setting.variableName).trim();
-      initialColorVals[setting.variableName] = value.startsWith('#') ? value : '#000000';
-    });
-    setColorValues(initialColorVals);
+    const fetchAndApplySettings = async () => {
+      setIsLoading(true);
+      setLoadError(null);
+      try {
+        const response = await fetch('http://localhost:3001/api/design-settings');
+        if (!response.ok) {
+          throw new Error(`Fehler beim Laden vom Server: ${response.statusText}`);
+        }
+        const savedSettings = await response.json();
 
-    const initialFontSizes: Record<string, number> = {};
-    const initialFontWeights: Record<string, string> = {};
-    editableFontSettings.forEach(setting => {
-      const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
-      initialFontSizes[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
-      
-      const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
-      initialFontWeights[setting.weightVariable] = (weight === '400' || weight === '600') ? weight : setting.defaultWeight;
-    });
-    setFontSizesPt(initialFontSizes);
-    setFontWeights(initialFontWeights);
+        if (savedSettings && savedSettings.colors && savedSettings.fontSizesPt && savedSettings.fontWeights) {
+          console.log('Geladene Einstellungen vom Backend:', savedSettings);
+          const loadedColors: Record<string, string> = {};
+          editableColorSettings.forEach(setting => {
+            const backendValue = savedSettings.colors[setting.variableName];
+            const valueToApply = backendValue || getComputedStyle(document.documentElement).getPropertyValue(setting.variableName).trim() || '#000000';
+            document.documentElement.style.setProperty(setting.variableName, valueToApply);
+            loadedColors[setting.variableName] = valueToApply;
+          });
+          setColorValues(loadedColors);
 
-    setIsLoading(false);
+          const loadedFontSizesPt: Record<string, number> = {};
+          editableFontSettings.forEach(setting => {
+            const backendValuePt = savedSettings.fontSizesPt[setting.sizeVariable];
+            let valueToApplyRem: string;
+            let ptValueForState: number;
+
+            if (typeof backendValuePt === 'number') {
+              valueToApplyRem = ptToRem(backendValuePt);
+              ptValueForState = backendValuePt;
+            } else {
+              const cssVarRem = getComputedStyle(document.documentElement).getPropertyValue(setting.sizeVariable).trim();
+              ptValueForState = cssVarRem ? remToPt(cssVarRem) : setting.defaultPtSize;
+              valueToApplyRem = cssVarRem || ptToRem(setting.defaultPtSize);
+            }
+            document.documentElement.style.setProperty(setting.sizeVariable, valueToApplyRem);
+            loadedFontSizesPt[setting.sizeVariable] = ptValueForState;
+          });
+          setFontSizesPt(loadedFontSizesPt);
+
+          const loadedFontWeights: Record<string, string> = {};
+          editableFontSettings.forEach(setting => {
+            const backendValue = savedSettings.fontWeights[setting.weightVariable];
+            const valueToApply = (backendValue === '400' || backendValue === '600') 
+              ? backendValue 
+              : (getComputedStyle(document.documentElement).getPropertyValue(setting.weightVariable).trim() || setting.defaultWeight);
+            document.documentElement.style.setProperty(setting.weightVariable, valueToApply);
+            loadedFontWeights[setting.weightVariable] = (valueToApply === '400' || valueToApply === '600') ? valueToApply : setting.defaultWeight;
+          });
+          setFontWeights(loadedFontWeights);
+          
+        } else {
+          throw new Error("Unvollständige Daten vom Backend, lade Fallback-Werte.");
+        }
+      } catch (error) {
+        console.error('Fehler beim Laden der Design-Einstellungen vom Backend, verwende CSS-Fallback:', error);
+        setLoadError(error instanceof Error ? error.message : String(error));
+        const rootStyles = getComputedStyle(document.documentElement);
+        const fallbackColors: Record<string, string> = {};
+        editableColorSettings.forEach(setting => {
+          const value = rootStyles.getPropertyValue(setting.variableName).trim();
+          fallbackColors[setting.variableName] = value.startsWith('#') ? value : '#000000';
+        });
+        setColorValues(fallbackColors);
+
+        const fallbackFontSizes: Record<string, number> = {};
+        const fallbackFontWeights: Record<string, string> = {};
+        editableFontSettings.forEach(setting => {
+          const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
+          fallbackFontSizes[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
+          const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
+          fallbackFontWeights[setting.weightVariable] = (weight === '400' || weight === '600') ? weight : setting.defaultWeight;
+        });
+        setFontSizesPt(fallbackFontSizes);
+        setFontWeights(fallbackFontWeights);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAndApplySettings();
   }, []);
 
   const handleColorChange = (variableName: string, value: string) => {
     const sanitizedValue = value.startsWith('#') ? value : `#${value.replace(/[^0-9a-fA-F]/g, '')}`;
-    
     document.documentElement.style.setProperty(variableName, sanitizedValue);
     setColorValues(prev => ({ ...prev, [variableName]: sanitizedValue }));
   };
@@ -173,12 +233,54 @@ const DesignAdminPage: React.FC = () => {
     setFontWeights(prev => ({ ...prev, [variableName]: weightValue }));
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const settingsToSave = {
+        colors: colorValues,
+        fontSizesPt: fontSizesPt,
+        fontWeights: fontWeights,
+      };
+
+      const response = await fetch('http://localhost:3001/api/design-settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settingsToSave),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `Fehler beim Speichern: ${response.statusText}` }));
+        throw new Error(errorData.message || `Fehler beim Speichern: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Speicherergebnis:', result.message);
+      alert('Design-Einstellungen erfolgreich gespeichert!');
+
+    } catch (error) {
+      console.error('Fehler beim Speichern der Design-Einstellungen:', error);
+      setSaveError(error instanceof Error ? error.message : String(error));
+      alert(`Fehler beim Speichern: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="p-6 text-text-on-dark">Lade Design-Einstellungen...</div>;
   }
 
   return (
     <div className="bg-surface-light p-8 text-text-on-light shadow-xl">
+      {loadError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-400">
+          Fehler beim Laden: {loadError}
+        </div>
+      )}
+
       <h1 className="text-custom-h1 font-custom-h1-weight font-headings mb-8 pb-2 border-b border-gray-300">
         Design-Einstellungen
       </h1>
@@ -264,10 +366,17 @@ const DesignAdminPage: React.FC = () => {
       
       <div className="mt-12 pt-6 border-t border-gray-300">
         <button 
-          className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg"
+          onClick={handleSave}
+          disabled={isSaving || isLoading}
+          className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg disabled:opacity-50"
         >
-          Einstellungen speichern (Backend-Anbindung folgt)
+          {isSaving ? 'Speichert...' : 'Einstellungen speichern'}
         </button>
+        {saveError && (
+          <div className="mt-2 p-2 text-sm bg-red-100 text-red-700 border border-red-400">
+            Fehler beim Speichern: {saveError}
+          </div>
+        )}
       </div>
     </div>
   );
