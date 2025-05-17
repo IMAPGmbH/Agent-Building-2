@@ -9,7 +9,7 @@ interface ColorSetting {
 const ptToRem = (pt: number): string => `${(pt / 12).toFixed(4)}rem`;
 const remToPt = (rem: string): number => {
   const numericValue = parseFloat(rem);
-  if (isNaN(numericValue)) return 12;
+  if (isNaN(numericValue)) return 12; // Standard-PT-Wert, falls Umrechnung fehlschlägt
   return parseFloat((numericValue * 12).toFixed(2));
 };
 
@@ -120,29 +120,54 @@ const DesignAdminPage: React.FC = () => {
   ];
 
   useEffect(() => {
+    // Funktion zum Laden der Einstellungen aus dem Backend ist in App.tsx global,
+    // hier initialisieren wir mit den aktuell berechneten Werten aus CSS,
+    // da die globalen Einstellungen bereits angewendet sein sollten.
+    // Das Laden hier wäre redundant und könnte zu Race Conditions führen.
+    // Stattdessen liest diese Komponente die Werte, die global schon gesetzt wurden.
     setIsLoading(true);
-    const rootStyles = getComputedStyle(document.documentElement);
-    
-    const currentColors: Record<string, string> = {};
-    editableColorSettings.forEach(setting => {
-      const value = rootStyles.getPropertyValue(setting.variableName).trim();
-      currentColors[setting.variableName] = value.startsWith('#') ? value : '#000000';
-    });
-    setColorValues(currentColors);
-
-    const currentFontSizesPt: Record<string, number> = {};
-    const currentFontWeights: Record<string, string> = {};
-    editableFontSettings.forEach(setting => {
-      const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
-      currentFontSizesPt[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
+    setLoadError(null);
+    try {
+      const rootStyles = getComputedStyle(document.documentElement);
       
-      const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
-      currentFontWeights[setting.weightVariable] = (weight === '400' || weight === '600') ? weight : setting.defaultWeight;
-    });
-    setFontSizesPt(currentFontSizesPt);
-    setFontWeights(currentFontWeights);
+      const currentColors: Record<string, string> = {};
+      editableColorSettings.forEach(setting => {
+        const value = rootStyles.getPropertyValue(setting.variableName).trim();
+        currentColors[setting.variableName] = value.startsWith('#') ? value : '#000000'; // Fallback, falls CSS-Wert ungültig
+      });
+      setColorValues(currentColors);
 
-    setIsLoading(false);
+      const currentFontSizesPt: Record<string, number> = {};
+      const currentFontWeights: Record<string, string> = {};
+      editableFontSettings.forEach(setting => {
+        const sizeRem = rootStyles.getPropertyValue(setting.sizeVariable).trim();
+        currentFontSizesPt[setting.sizeVariable] = sizeRem ? remToPt(sizeRem) : setting.defaultPtSize;
+        
+        const weight = rootStyles.getPropertyValue(setting.weightVariable).trim();
+        // Sicherstellen, dass nur gültige Gewichte gesetzt werden
+        currentFontWeights[setting.weightVariable] = (weight === '400' || weight === '600' || weight === '500' || weight === '700') ? weight : setting.defaultWeight;
+      });
+      setFontSizesPt(currentFontSizesPt);
+      setFontWeights(currentFontWeights);
+
+    } catch (error) {
+        console.error("Fehler beim Initialisieren der Design Admin Seite mit berechneten Styles:", error);
+        setLoadError("Fehler beim Lesen der aktuellen Styles. Standardwerte werden angezeigt.");
+        // Fallback zu Default-Werten, falls getComputedStyle fehlschlägt oder CSS-Variablen nicht da sind
+        const fallbackColors: Record<string, string> = {};
+        editableColorSettings.forEach(s => fallbackColors[s.variableName] = '#000000'); // Beispiel Fallback
+        setColorValues(fallbackColors);
+
+        const fallbackFontSizes: Record<string, number> = {};
+        editableFontSettings.forEach(s => fallbackFontSizes[s.sizeVariable] = s.defaultPtSize);
+        setFontSizesPt(fallbackFontSizes);
+
+        const fallbackFontWeights: Record<string, string> = {};
+        editableFontSettings.forEach(s => fallbackFontWeights[s.weightVariable] = s.defaultWeight);
+        setFontWeights(fallbackFontWeights);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const handleColorChange = (variableName: string, value: string) => {
@@ -156,15 +181,17 @@ const DesignAdminPage: React.FC = () => {
     if (!hex.startsWith('#')) {
       hex = `#${hex}`;
     }
+    // Akzeptiere 3- oder 6-stellige Hex-Werte
     if (/^#[0-9a-fA-F]{6}$/i.test(hex) || /^#[0-9a-fA-F]{3}$/i.test(hex)) {
       handleColorChange(variableName, hex);
     } else {
+      // Erlaube temporär ungültige Eingaben, damit der User tippen kann
       setColorValues(prev => ({ ...prev, [variableName]: textValue }));
     }
   };
 
   const handleFontSizeChange = (variableName: string, ptValue: number) => {
-    if (isNaN(ptValue) || ptValue <= 0) return;
+    if (isNaN(ptValue) || ptValue <= 0) return; // Ungültige Eingaben ignorieren
     const remValue = ptToRem(ptValue);
     document.documentElement.style.setProperty(variableName, remValue);
     setFontSizesPt(prev => ({ ...prev, [variableName]: ptValue }));
@@ -185,7 +212,7 @@ const DesignAdminPage: React.FC = () => {
         fontWeights: fontWeights,
       };
 
-      const response = await fetch('http://localhost:3001/api/design-settings', {
+      const response = await fetch('/api/design-settings', { // <<< GEÄNDERT ZU RELATIVEM PFAD
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -194,8 +221,8 @@ const DesignAdminPage: React.FC = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: `Fehler beim Speichern: ${response.statusText}` }));
-        throw new Error(errorData.message || `Fehler beim Speichern: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({ message: `Fehler beim Speichern: Server antwortete mit ${response.statusText} (${response.status})` }));
+        throw new Error(errorData.message || `Fehler beim Speichern: Server antwortete mit ${response.statusText} (${response.status})`);
       }
 
       const result = await response.json();
@@ -204,22 +231,23 @@ const DesignAdminPage: React.FC = () => {
 
     } catch (error) {
       console.error('Fehler beim Speichern der Design-Einstellungen:', error);
-      setSaveError(error instanceof Error ? error.message : String(error));
-      alert(`Fehler beim Speichern: ${error instanceof Error ? error.message : String(error)}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setSaveError(errorMessage);
+      alert(`Fehler beim Speichern: ${errorMessage}`);
     } finally {
       setIsSaving(false);
     }
   };
 
   if (isLoading) {
-    return <div className="p-6 text-text-on-dark">Lade Design-Einstellungen...</div>;
+    return <div className="p-6 text-text-on-dark">Lade Design-Editor...</div>;
   }
 
   return (
     <div className="bg-surface-light p-8 text-text-on-light shadow-xl">
       {loadError && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-400">
-          Fehler beim Laden: {loadError}
+          Fehler beim Initialisieren der Seite: {loadError}
         </div>
       )}
 
@@ -240,7 +268,7 @@ const DesignAdminPage: React.FC = () => {
                 <input
                   type="color"
                   id={`${setting.variableName}-colorpicker`}
-                  value={colorValues[setting.variableName]?.match(/^#[0-9a-fA-F]{6}$/i) ? colorValues[setting.variableName] : '#000000'}
+                  value={colorValues[setting.variableName]?.match(/^#[0-9a-fA-F]{3,6}$/i) ? colorValues[setting.variableName] : '#000000'}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => handleColorChange(setting.variableName, e.target.value)}
                   className="h-10 w-10 p-0 border-0 cursor-pointer shadow"
                 />
@@ -254,7 +282,7 @@ const DesignAdminPage: React.FC = () => {
                 />
                 <div 
                   className="w-10 h-10 border border-gray-300 shadow-inner"
-                  style={{ backgroundColor: colorValues[setting.variableName] || 'transparent' }}
+                  style={{ backgroundColor: colorValues[setting.variableName]?.match(/^#[0-9a-fA-F]{3,6}$/i) ? colorValues[setting.variableName] : 'transparent' }}
                 ></div>
               </div>
             </div>
@@ -279,11 +307,11 @@ const DesignAdminPage: React.FC = () => {
                   <input
                     type="number"
                     id={`${setting.sizeVariable}-size`}
-                    value={fontSizesPt[setting.sizeVariable] || setting.defaultPtSize}
+                    value={fontSizesPt[setting.sizeVariable] !== undefined ? fontSizesPt[setting.sizeVariable] : setting.defaultPtSize}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleFontSizeChange(setting.sizeVariable, parseFloat(e.target.value))}
                     className="form-input w-full text-sm border-gray-300 shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
                     min="1"
-                    step="1"
+                    step="0.5" // Kleinere Schritte erlauben, falls gewünscht
                   />
                 </div>
                 <div>
@@ -297,7 +325,9 @@ const DesignAdminPage: React.FC = () => {
                     className="form-select w-full text-sm border-gray-300 shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
                   >
                     <option value="400">Regular (400)</option>
+                    <option value="500">Medium (500)</option>
                     <option value="600">Semibold (600)</option>
+                    <option value="700">Bold (700)</option>
                   </select>
                 </div>
               </div>

@@ -5,121 +5,21 @@ import DesignAdminPage from './components/admin/DesignAdminPage';
 
 // Helper functions for pt/rem conversion
 const ptToRem = (pt: number): string => `${(pt / 12).toFixed(4)}rem`;
-const remToPt = (rem: string): number => {
-  const numericValue = parseFloat(rem);
-  if (isNaN(numericValue)) return 12;
-  return parseFloat((numericValue * 12).toFixed(2));
-};
+// const remToPt = (rem: string): number => { // remToPt wird in App.tsx nicht direkt verwendet, aber in DesignAdminPage
+//   const numericValue = parseFloat(rem);
+//   if (isNaN(numericValue)) return 12;
+//   return parseFloat((numericValue * 12).toFixed(2));
+// };
 
-interface ColorSetting {
-  label: string;
-  variableName: string;
-  description?: string;
-}
-
-interface FontSetting {
-  label: string;
-  sizeVariable: string;
-  weightVariable: string;
-  defaultPtSize: number;
-  defaultWeight: string;
-  description?: string;
-}
-
-const editableColorSettings: ColorSetting[] = [
-  { label: 'Seitenhintergrund', variableName: '--color-page-bg', description: 'Haupt-Hintergrundfarbe der gesamten Anwendung.' },
-  { label: 'Helle Oberfläche (z.B. Karten)', variableName: '--color-surface-light', description: 'Hintergrund für helle Inhaltselemente wie Karten, Modals.' },
-  { label: 'Dunkle Oberfläche (z.B. Nav)', variableName: '--color-surface-dark', description: 'Hintergrund für dunkle UI-Bereiche wie die Hauptnavigation.' },
-  { label: 'Text auf dunklem Hintergrund', variableName: '--color-text-on-dark', description: 'Standard-Textfarbe auf dunklen Oberflächen.' },
-  { label: 'Text auf hellem Hintergrund', variableName: '--color-text-on-light', description: 'Standard-Textfarbe auf hellen Oberflächen.' },
-  { label: 'Sidebar Hintergrund', variableName: '--color-sidebar-bg', description: 'Hintergrundfarbe der Sidebar.' },
-  { label: 'Sidebar Text', variableName: '--color-sidebar-text', description: 'Textfarbe in der Sidebar.' },
-  { label: 'Sidebar Aktives Item Hintergrund', variableName: '--color-sidebar-active-bg', description: 'Hintergrund des aktiven/ausgewählten Items in der Sidebar.' },
-  { label: 'Sidebar Aktives Item Text', variableName: '--color-sidebar-active-text', description: 'Textfarbe des aktiven/ausgewählten Items in der Sidebar.' },
-  { label: 'Akzentstreifen (unter Nav)', variableName: '--color-accent-stripe', description: 'Farbe des Akzentstreifens unter der Hauptnavigation.' },
-  { label: 'Button Primär Hintergrund', variableName: '--color-button-primary-bg', description: 'Hintergrundfarbe für primäre Buttons.' },
-  { label: 'Button Primär Text', variableName: '--color-button-primary-text', description: 'Textfarbe für primäre Buttons.' },
-  { label: 'Button Primär Hover Hintergrund', variableName: '--color-button-primary-hover-bg', description: 'Hintergrundfarbe für primäre Buttons beim Hover.' },
-  { label: 'Link Text', variableName: '--color-link-text', description: 'Standardfarbe für Hyperlinks.' },
-  { label: 'Chat: Nutzer Nachricht Hintergrund', variableName: '--color-chat-user-message-bg' },
-  { label: 'Chat: Nutzer Nachricht Text', variableName: '--color-chat-user-message-text' },
-  { label: 'Chat: Agent Nachricht Hintergrund', variableName: '--color-chat-agent-message-bg' },
-  { label: 'Chat: Agent Nachricht Text', variableName: '--color-chat-agent-message-text' },
-];
-
-const editableFontSettings: FontSetting[] = [
-  {
-    label: 'Sidebar Navigation',
-    sizeVariable: '--font-size-sidebar-nav-item',
-    weightVariable: '--font-weight-sidebar-nav-item',
-    defaultPtSize: 12,
-    defaultWeight: '400',
-    description: 'Schrift für Menüpunkte in der seitlichen Navigation.'
-  },
-  {
-    label: 'Fließtext (Body)',
-    sizeVariable: '--font-size-body',
-    weightVariable: '--font-weight-body',
-    defaultPtSize: 12,
-    defaultWeight: '400',
-    description: 'Allgemeiner Text für Beschreibungen, Paragraphen etc.'
-  },
-  {
-    label: 'Überschrift H1',
-    sizeVariable: '--font-size-h1',
-    weightVariable: '--font-weight-h1',
-    defaultPtSize: 22.5,
-    defaultWeight: '700',
-    description: 'Größte Überschrift auf den Seiten.'
-  },
-  {
-    label: 'Überschrift H2',
-    sizeVariable: '--font-size-h2',
-    weightVariable: '--font-weight-h2',
-    defaultPtSize: 18,
-    defaultWeight: '600',
-    description: 'Zweitgrößte Überschrift.'
-  },
-  {
-    label: 'Überschrift H3',
-    sizeVariable: '--font-size-h3',
-    weightVariable: '--font-weight-h3',
-    defaultPtSize: 15,
-    defaultWeight: '600',
-    description: 'Drittgrößte Überschrift.'
-  },
-  {
-    label: 'Chat Nachrichten Text',
-    sizeVariable: '--font-size-chat-message',
-    weightVariable: '--font-weight-chat-message',
-    defaultPtSize: 10.5,
-    defaultWeight: '400',
-    description: 'Text innerhalb der Chatblasen.'
-  },
-  {
-    label: 'Chat Eingabefeld Text',
-    sizeVariable: '--font-size-chat-input',
-    weightVariable: '--font-weight-chat-input',
-    defaultPtSize: 10.5,
-    defaultWeight: '400',
-    description: 'Text im Chat-Eingabefeld.'
-  },
-  {
-    label: 'Button Text',
-    sizeVariable: '--font-size-button',
-    weightVariable: '--font-weight-button',
-    defaultPtSize: 10.5,
-    defaultWeight: '500',
-    description: 'Text auf Standard-Buttons.'
-  },
-];
+// Die Definitionen für ColorSetting und FontSetting sind in DesignAdminPage.tsx und nicht direkt hier nötig,
+// da App.tsx die DesignAdminPage-Komponente nur rendert.
 
 interface Agent {
   id: string;
   name: string;
   description: string;
   systemPrompt?: string;
-  configuration: Record<string, string>;
+  configuration: Record<string, string>; // Beinhaltet jetzt z.B. { model: "gemini-1.5-flash-latest" }
 }
 
 interface UploadedFile {
@@ -147,17 +47,17 @@ interface ChatMessage {
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isKeyValid, setIsKeyValid] = useState(true);
+  // const [isKeyValid, setIsKeyValid] = useState(true); // isKeyValid wird nicht mehr verwendet
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [globalPrompts, setGlobalPrompts] = useState<GlobalPrompt[]>([]);
   const [newPrompt, setNewPrompt] = useState({ title: '', content: '', category: 'Allgemein' });
-  const [isAgentsSubmenuOpen, setIsAgentsSubmenuOpen] = useState(false);
-  const [newAgent, setNewAgent] = useState({ 
-    name: '', 
-    description: '', 
+  const [isAgentsSubmenuOpen, setIsAgentsSubmenuOpen] = useState(true); // Default auf true für bessere UX beim Start mit Agents
+  const [newAgent, setNewAgent] = useState({
+    name: '',
+    description: '',
     systemPrompt: '',
-    model: 'Gemini 2.5 Pro (Google)' 
+    model: 'gemini-1.5-flash-latest' // Angepasst an Backend Erwartung, könnte auch spezifischer sein
   });
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -165,7 +65,8 @@ function App() {
   const [isSystemPromptVisible, setIsSystemPromptVisible] = useState(false);
   const [isAgentResponding, setIsAgentResponding] = useState(false);
   const [areSettingsApplied, setAreSettingsApplied] = useState(false);
-  
+  const [initialLoadError, setInitialLoadError] = useState<string | null>(null);
+
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -177,13 +78,17 @@ function App() {
     'Sonstiges'
   ];
 
+  // Effekt zum globalen Anwenden der Design-Einstellungen vom Backend
   useEffect(() => {
     const applyDesignSettings = async () => {
+      setInitialLoadError(null);
       try {
-        const response = await fetch('http://localhost:3001/api/design-settings');
+        const response = await fetch('/api/design-settings'); // <<< GEÄNDERT ZU RELATIVEM PFAD
         if (!response.ok) {
-          console.warn(`Design-Einstellungen konnten nicht vom Server geladen werden: ${response.statusText}. Standard-CSS-Werte werden verwendet.`);
-          setAreSettingsApplied(true);
+          const errorText = await response.text();
+          console.warn(`Design-Einstellungen konnten nicht vom Server geladen werden (${response.status} ${response.statusText}): ${errorText}. Standard-CSS-Werte werden verwendet.`);
+          setInitialLoadError(`Design-Einstellungen konnten nicht geladen werden (Status: ${response.status}). Standardwerte aktiv.`);
+          setAreSettingsApplied(true); // Trotzdem true setzen, damit die App rendert
           return;
         }
         const savedSettings = await response.json();
@@ -207,63 +112,75 @@ function App() {
             }
           });
           console.log('Design-Einstellungen global in App.tsx angewendet.');
+        } else {
+          console.warn('Geladene Design-Einstellungen sind unvollständig. Standardwerte könnten teilweise aktiv bleiben.');
+          setInitialLoadError('Geladene Design-Einstellungen sind unvollständig.');
         }
       } catch (error) {
         console.error('Fehler beim globalen Laden/Anwenden der Design-Einstellungen in App.tsx:', error);
+        setInitialLoadError(`Netzwerkfehler beim Laden der Design-Einstellungen: ${error instanceof Error ? error.message : String(error)}`);
       } finally {
-        setAreSettingsApplied(true);
+        setAreSettingsApplied(true); // App rendern lassen, auch wenn Defaults verwendet werden
       }
     };
 
     applyDesignSettings();
   }, []);
 
+  // Effekt zum Laden der Agenten vom Backend
   useEffect(() => {
     const fetchAgents = async () => {
+      setInitialLoadError(null);
       try {
-        const response = await fetch('http://localhost:3001/api/agents');
+        const response = await fetch('/api/agents'); // <<< GEÄNDERT ZU RELATIVEM PFAD
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorText = await response.text();
+          throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}. Body: ${errorText}`);
         }
         const data = await response.json();
         setAgents(data);
       } catch (error) {
         console.error("Fehler beim Laden der Agenten vom Backend:", error);
+        setInitialLoadError(`Agenten konnten nicht geladen werden: ${error instanceof Error ? error.message : String(error)}`);
       }
     };
 
-    fetchAgents();
-  }, []);
+    if (areSettingsApplied) { // Agenten erst laden, wenn Design-Settings (auch fehlerhaft) durchgelaufen sind
+        fetchAgents();
+    }
+  }, [areSettingsApplied]);
 
+  // Lokale Daten (Dateien, Prompts) laden
   useEffect(() => {
     const savedFiles = localStorage.getItem('uploaded_files');
     if (savedFiles) {
-      setUploadedFiles(JSON.parse(savedFiles));
+      try {
+        setUploadedFiles(JSON.parse(savedFiles));
+      } catch (e) { console.error("Fehler beim Parsen der gespeicherten Dateien:", e); localStorage.removeItem('uploaded_files');}
     }
 
     const savedPrompts = localStorage.getItem('global_prompts');
     if (savedPrompts) {
-      setGlobalPrompts(JSON.parse(savedPrompts));
+      try {
+        setGlobalPrompts(JSON.parse(savedPrompts));
+      } catch (e) { console.error("Fehler beim Parsen der gespeicherten Prompts:", e); localStorage.removeItem('global_prompts');}
     }
   }, []);
 
+  // Textarea Höhe anpassen
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = 'auto'; // Zurücksetzen, um korrekte scrollHeight zu bekommen
       const scrollHeight = textareaRef.current.scrollHeight;
-      const baseHeight = 24;
-      const maxHeight = 6 * baseHeight;
+      const baseHeight = 24; // Annahme: 1 Zeile ~ 24px
+      const maxHeight = 6 * baseHeight; // Max Höhe von 6 Zeilen
 
-      if (chatInput === '') {
+      if (chatInput === '') { // Wenn leer, auf Basis-Höhe setzen
         textareaRef.current.style.height = `${baseHeight}px`;
         textareaRef.current.style.overflowY = 'hidden';
       } else {
         textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
-        if (scrollHeight > maxHeight) {
-          textareaRef.current.style.overflowY = 'auto';
-        } else {
-          textareaRef.current.style.overflowY = 'hidden';
-        }
+        textareaRef.current.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
       }
     }
   }, [chatInput]);
@@ -281,10 +198,10 @@ function App() {
         name: newAgent.name,
         description: newAgent.description,
         systemPrompt: newAgent.systemPrompt,
-        configuration: { model: newAgent.model },
+        configuration: { model: newAgent.model }, // Das Backend erwartet `configuration.model`
       };
 
-      const response = await fetch('http://localhost:3001/api/agents', {
+      const response = await fetch('/api/agents', { // <<< GEÄNDERT ZU RELATIVEM PFAD
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -293,11 +210,12 @@ function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+        const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status} ${response.statusText}` }));
         throw new Error(errorData.message || `Fehler beim Erstellen des Agenten (Status: ${response.status})`);
       }
 
-      const fetchAgentsResponse = await fetch('http://localhost:3001/api/agents');
+      // Nach erfolgreichem Erstellen die Agentenliste neu laden
+      const fetchAgentsResponse = await fetch('/api/agents'); // <<< GEÄNDERT ZU RELATIVEM PFAD
       if (!fetchAgentsResponse.ok) {
         throw new Error(`HTTP error beim Neuladen der Agenten! status: ${fetchAgentsResponse.status}`);
       }
@@ -306,11 +224,11 @@ function App() {
 
       setActiveTab('dashboard');
       setIsAgentsSubmenuOpen(true);
-      setNewAgent({ name: '', description: '', systemPrompt: '', model: 'Gemini 2.5 Pro (Google)' });
+      setNewAgent({ name: '', description: '', systemPrompt: '', model: 'gemini-1.5-flash-latest' });
 
     } catch (error) {
       console.error("Fehler beim Erstellen des Agenten:", error);
-      alert(`Ein Fehler ist aufgetreten: ${error.message}`);
+      alert(`Ein Fehler ist aufgetreten: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -337,19 +255,20 @@ function App() {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
+      e.target.value = ""; // Input zurücksetzen, um dieselbe Datei erneut hochladen zu können
     }
   };
 
   const handleFiles = (files: FileList) => {
-    const newFiles: UploadedFile[] = Array.from(files).map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
+    const newFilesArray: UploadedFile[] = Array.from(files).map(file => ({
+      id: Math.random().toString(36).substr(2, 9), // Einfache ID
       name: file.name,
       size: file.size,
       type: file.type,
       uploadDate: new Date()
     }));
 
-    const updatedFiles = [...uploadedFiles, ...newFiles];
+    const updatedFiles = [...uploadedFiles, ...newFilesArray];
     setUploadedFiles(updatedFiles);
     localStorage.setItem('uploaded_files', JSON.stringify(updatedFiles));
   };
@@ -370,7 +289,11 @@ function App() {
 
   const handlePromptSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const prompt: GlobalPrompt = {
+    if (!newPrompt.title.trim() || !newPrompt.content.trim()) {
+        alert("Titel und Inhalt des Prompts dürfen nicht leer sein.");
+        return;
+    }
+    const promptToAdd: GlobalPrompt = {
       id: Math.random().toString(36).substr(2, 9),
       title: newPrompt.title,
       content: newPrompt.content,
@@ -378,7 +301,7 @@ function App() {
       createdAt: new Date()
     };
 
-    const updatedPrompts = [...globalPrompts, prompt];
+    const updatedPrompts = [...globalPrompts, promptToAdd];
     setGlobalPrompts(updatedPrompts);
     localStorage.setItem('global_prompts', JSON.stringify(updatedPrompts));
     setNewPrompt({ title: '', content: '', category: 'Allgemein' });
@@ -390,8 +313,8 @@ function App() {
     localStorage.setItem('global_prompts', JSON.stringify(updatedPrompts));
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = async (e?: React.FormEvent) => { // e ist optional
+    if (e) e.preventDefault();
     if (chatInput.trim() === '' || !selectedAgent) return;
 
     const userInput = chatInput.trim();
@@ -408,23 +331,23 @@ function App() {
     const historyForBackend = messages.map(msg => ({ sender: msg.sender, text: msg.text }));
 
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const response = await fetch('/api/chat', { // <<< GEÄNDERT ZU RELATIVEM PFAD
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: userInput,
-          history: historyForBackend,
-          systemPrompt: selectedAgent.systemPrompt || '',
-          agentModel: selectedAgent.configuration?.model || 'Gemini 2.5 Pro (Google)',
+          history: historyForBackend, // Die letzten Nachrichten des aktuellen Chats
+          systemPrompt: selectedAgent.systemPrompt || '', // Systemprompt des ausgewählten Agenten
+          agentModel: selectedAgent.configuration?.model || 'gemini-1.5-flash-latest', // Modell des Agenten
         }),
       });
 
       setIsAgentResponding(false);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: `HTTP error! Status: ${response.status}` }));
+        const errorData = await response.json().catch(() => ({ message: `HTTP error! Status: ${response.status} ${response.statusText}` }));
         throw new Error(errorData.message || `Fehler beim Senden der Nachricht (Status: ${response.status})`);
       }
 
@@ -437,8 +360,15 @@ function App() {
           sender: 'agent',
         };
         setMessages(prevMessages => [...prevMessages, agentResponse]);
+      } else if (data.error && data.message) { // Backend könnte einen kontrollierten Fehler senden
+        const errorResponse: ChatMessage = {
+          id: Math.random().toString(36).substr(2, 9) + '_agent_error',
+          text: `Fehler vom Agenten: ${data.message}`,
+          sender: 'agent',
+        };
+        setMessages(prevMessages => [...prevMessages, errorResponse]);
       } else {
-        throw new Error("Keine Antwort (reply) vom Backend erhalten.");
+        throw new Error("Keine gültige Antwort (reply) oder Fehlerstruktur vom Backend erhalten.");
       }
 
     } catch (error) {
@@ -446,7 +376,7 @@ function App() {
       console.error("Fehler bei der Chat-Kommunikation:", error);
       const errorResponse: ChatMessage = {
         id: Math.random().toString(36).substr(2, 9) + '_agent_error',
-        text: `Entschuldigung, ein Fehler ist aufgetreten: ${error.message}`,
+        text: `Entschuldigung, ein Fehler ist aufgetreten: ${error instanceof Error ? error.message : String(error)}`,
         sender: 'agent',
       };
       setMessages(prevMessages => [...prevMessages, errorResponse]);
@@ -457,10 +387,18 @@ function App() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+
   if (!areSettingsApplied) {
-    return <div className="min-h-screen bg-page-bg flex items-center justify-center text-text-on-dark">
-      <div className="text-lg">Lade App-Styles...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-page-bg flex flex-col items-center justify-center text-text-on-dark p-4">
+        <div className="text-lg mb-4">Lade App-Styles...</div>
+        {initialLoadError && (
+          <div className="p-3 bg-red-700 text-white border border-red-900 max-w-md text-center">
+            {initialLoadError}
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -474,15 +412,15 @@ function App() {
 
       <div className="w-full h-1.5 bg-accent-stripe fixed top-16 left-0 z-50"></div>
 
-      <div className="flex mt-[4.375rem]">
+      <div className="flex pt-[4.375rem]"> {/* pt Wert angepasst an Nav + Stripe Höhe */}
         <div className="w-64 bg-sidebar-bg p-4 fixed top-[4.375rem] left-0 h-[calc(100vh-4.375rem)] overflow-y-auto">
-          <div className="space-y-4">
+          <div className="space-y-1"> {/* Reduzierter Abstand zwischen Sidebar-Items */}
             <button
               onClick={() => {
                 setActiveTab('dashboard');
-                setIsAgentsSubmenuOpen(!isAgentsSubmenuOpen);
+                setIsAgentsSubmenuOpen(prev => !prev); // Toggle Submenü
               }}
-              className={`flex items-center justify-between w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
+              className={`flex items-center justify-between w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav-weight ${
                 activeTab === 'dashboard' ? 'bg-sidebar-active-bg text-sidebar-active-text' : 'text-sidebar-text hover:bg-sidebar-hover-bg'
               }`}
             >
@@ -496,27 +434,38 @@ function App() {
             </button>
 
             {isAgentsSubmenuOpen && agents.length > 0 && (
-              <div className="pl-4 mt-1 space-y-1">
-                {agents.slice(0, 3).map(agent => (
+              <div className="pl-4 mt-1 space-y-0.5"> {/* Feinerer Abstand im Submenü */}
+                {agents.slice(0, 5).map(agent => ( // Zeige bis zu 5 Agents
                   <button
                     key={agent.id}
                     onClick={() => {
                       setSelectedAgent(agent);
                       setActiveTab('chat');
-                      setMessages([]);
-                      setIsSystemPromptVisible(false);
+                      setMessages([]); // Chatverlauf zurücksetzen
+                      setIsSystemPromptVisible(false); // Systemprompt einklappen
                     }}
-                    className="flex items-center space-x-2 w-full p-1.5 text-custom-sidebar-nav font-custom-sidebar-nav text-text-muted-on-dark hover:bg-sidebar-hover-bg"
+                    className={`flex items-center space-x-2 w-full p-1.5 text-custom-sidebar-nav font-custom-sidebar-nav-weight truncate ${
+                        selectedAgent?.id === agent.id && activeTab === 'chat' ? 'text-sidebar-active-text bg-sidebar-active-bg bg-opacity-50' : 'text-text-muted-on-dark hover:bg-sidebar-hover-bg hover:text-sidebar-text'
+                    }`}
+                    title={agent.name}
                   >
-                    <span>- {agent.name}</span>
+                    <span className="truncate">- {agent.name}</span>
                   </button>
                 ))}
+                {agents.length > 5 && (
+                    <button
+                        onClick={() => setActiveTab('dashboard')}
+                        className="flex items-center space-x-2 w-full p-1.5 text-custom-sidebar-nav font-custom-sidebar-nav-weight text-text-muted-on-dark hover:bg-sidebar-hover-bg hover:text-sidebar-text"
+                    >
+                        <span className="text-xs">... mehr anzeigen</span>
+                    </button>
+                )}
               </div>
             )}
 
             <button
               onClick={() => setActiveTab('create')}
-              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
+              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav-weight ${
                 activeTab === 'create' ? 'bg-sidebar-active-bg text-sidebar-active-text' : 'text-sidebar-text hover:bg-sidebar-hover-bg'
               }`}
             >
@@ -526,7 +475,7 @@ function App() {
 
             <button
               onClick={() => setActiveTab('datacenter')}
-              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
+              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav-weight ${
                 activeTab === 'datacenter' ? 'bg-sidebar-active-bg text-sidebar-active-text' : 'text-sidebar-text hover:bg-sidebar-hover-bg'
               }`}
             >
@@ -536,7 +485,7 @@ function App() {
 
             <button
               onClick={() => setActiveTab('designAdmin')}
-              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav ${
+              className={`flex items-center space-x-2 w-full p-2 text-custom-sidebar-nav font-custom-sidebar-nav-weight ${
                 activeTab === 'designAdmin' ? 'bg-sidebar-active-bg text-sidebar-active-text' : 'text-sidebar-text hover:bg-sidebar-hover-bg'
               }`}
             >
@@ -546,22 +495,29 @@ function App() {
           </div>
         </div>
 
-        <div className="flex-1 p-8 ml-64">
+        <main className="flex-1 p-8 ml-64 overflow-y-auto h-[calc(100vh-4.375rem)]"> {/* Scrollbar für den Hauptinhalt */}
+          {initialLoadError && activeTab !== 'designAdmin' && ( // Fehler nicht auf DesignAdmin Seite prominent zeigen, da dort eigener Loader
+            <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-400">
+              {initialLoadError}
+            </div>
+          )}
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Meine Agents</h1>
-              {agents.length === 0 ? (
-                <div className="bg-surface-light p-6 border border-primary-100">
+              {agents.length === 0 && !initialLoadError ? ( // Nur zeigen, wenn kein Ladefehler vorliegt
+                <div className="bg-surface-light p-6 border border-gray-200">
                   <p className="text-custom-body font-custom-body-weight text-text-muted-on-light">
-                    Du hast noch keine Agents erstellt. Erstelle deinen ersten Agent über den Button "Neuer Agent" in der Seitenleiste.
+                    Du hast noch keine Agents erstellt. Klicke auf "Neuer Agent" in der Seitenleiste, um zu beginnen.
                   </p>
                 </div>
-              ) : (
+              ) : agents.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {agents.map((agent) => (
-                    <div key={agent.id} className="bg-surface-light p-6 border border-primary-100 hover:border-highlight-300 transition-colors duration-200 shadow">
-                      <h3 className="text-custom-h3 font-custom-h3-weight text-text-on-light">{agent.name}</h3>
-                      <p className="mt-2 text-custom-body font-custom-body-weight text-text-muted-on-light truncate">{agent.description}</p>
+                    <div key={agent.id} className="bg-surface-light p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200">
+                      <h3 className="text-custom-h3 font-custom-h3-weight text-text-on-light truncate" title={agent.name}>{agent.name}</h3>
+                      <p className="mt-2 text-custom-body font-custom-body-weight text-text-muted-on-light h-10 overflow-hidden text-ellipsis"> {/* Feste Höhe für Konsistenz */}
+                        {agent.description}
+                      </p>
                       <div className="mt-4">
                         <button
                           onClick={() => {
@@ -578,20 +534,21 @@ function App() {
                     </div>
                   ))}
                 </div>
-              )}
+              ) : null /* Bei Ladefehler und 0 Agenten nichts extra anzeigen */ }
             </div>
           )}
 
           {activeTab === 'create' && (
             <div>
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Neuen Agent erstellen</h1>
-              <div className="bg-surface-light p-6 border border-primary-100">
+              <div className="bg-surface-light p-6 border border-gray-200">
                 <form onSubmit={handleCreateAgentSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-custom-body font-custom-body-weight text-text-on-light">
+                    <label htmlFor="agentName" className="block text-custom-body font-custom-body-weight text-text-on-light">
                       Name des Agents:
                     </label>
                     <input
+                      id="agentName"
                       type="text"
                       name="agentName"
                       value={newAgent.name}
@@ -602,10 +559,11 @@ function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-custom-body font-custom-body-weight text-text-on-light">
+                    <label htmlFor="agentDescription" className="block text-custom-body font-custom-body-weight text-text-on-light">
                       Kurzbeschreibung:
                     </label>
                     <textarea
+                      id="agentDescription"
                       name="agentDescription"
                       value={newAgent.description}
                       onChange={(e) => setNewAgent({...newAgent, description: e.target.value})}
@@ -616,32 +574,35 @@ function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-custom-body font-custom-body-weight text-text-on-light">
-                      Systemprompt:
+                    <label htmlFor="agentSystemPrompt" className="block text-custom-body font-custom-body-weight text-text-on-light">
+                      Systemprompt (optional):
                     </label>
                     <textarea
+                      id="agentSystemPrompt"
                       name="agentSystemPrompt"
                       value={newAgent.systemPrompt}
                       onChange={(e) => setNewAgent({...newAgent, systemPrompt: e.target.value})}
-                      rows={4}
+                      rows={5}
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-focus-ring focus:ring-focus-ring form-textarea text-custom-body font-custom-body-weight"
-                      placeholder="Gib hier ein, was die Aufgabe des KI-Agenten sein soll."
+                      placeholder="Instruktionen für die KI, z.B. 'Du bist ein hilfreicher Assistent für Marketing-Texte.'"
                     />
                   </div>
                   <div>
-                    <label className="block text-custom-body font-custom-body-weight text-text-on-light">
+                    <label htmlFor="agentModel" className="block text-custom-body font-custom-body-weight text-text-on-light">
                       KI-Modell:
                     </label>
                     <select
+                      id="agentModel"
                       name="agentModel"
                       value={newAgent.model}
                       onChange={(e) => setNewAgent({...newAgent, model: e.target.value})}
                       className="mt-1 block w-full border-gray-300 shadow-sm focus:border-focus-ring focus:ring-focus-ring form-select text-custom-body font-custom-body-weight"
                       required
                     >
-                      <option value="GPT-4o (OpenAI)" disabled>GPT-4o (OpenAI) - In Kürze</option>
-                      <option value="Gemini 2.5 Pro (Google)">Gemini 2.5 Pro (Google)</option>
-                      <option value="Claude 3.7 Sonett (Anthropic)" disabled>Claude 3.7 Sonett (Anthropic) - In Kürze</option>
+                      {/* Wert muss mit Backend-Erwartung übereinstimmen, z.B. "gemini-1.5-flash-latest" */}
+                      <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Google)</option>
+                      {/* Weitere Modelle könnten hier als Optionen hinzugefügt werden, wenn vom Backend unterstützt */}
+                      {/* <option value="gpt-4o" disabled>GPT-4o (OpenAI) - In Kürze</option> */}
                     </select>
                   </div>
                   <div>
@@ -661,12 +622,14 @@ function App() {
             <div>
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Datencenter</h1>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-surface-light p-6 border border-primary-100">
+                {/* Globale Prompts Sektion */}
+                <div className="bg-surface-light p-6 border border-gray-200">
                   <h2 className="text-custom-h2 font-custom-h2-weight text-text-on-light mb-4">Globale Prompts</h2>
                   <form onSubmit={handlePromptSubmit} className="mb-6 space-y-4">
                     <div>
-                      <label className="block text-custom-body font-custom-body-weight text-text-on-light">Titel</label>
+                      <label htmlFor="promptTitle" className="block text-custom-body font-custom-body-weight text-text-on-light">Titel</label>
                       <input
+                        id="promptTitle"
                         type="text"
                         value={newPrompt.title}
                         onChange={(e) => setNewPrompt({...newPrompt, title: e.target.value})}
@@ -676,8 +639,9 @@ function App() {
                       />
                     </div>
                     <div>
-                      <label className="block text-custom-body font-custom-body-weight text-text-on-light">Kategorie</label>
+                      <label htmlFor="promptCategory" className="block text-custom-body font-custom-body-weight text-text-on-light">Kategorie</label>
                       <select
+                        id="promptCategory"
                         value={newPrompt.category}
                         onChange={(e) => setNewPrompt({...newPrompt, category: e.target.value})}
                         className="mt-1 block w-full border-gray-300 shadow-sm focus:border-focus-ring focus:ring-focus-ring form-select text-custom-body font-custom-body-weight"
@@ -690,8 +654,9 @@ function App() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-custom-body font-custom-body-weight text-text-on-light">Prompt</label>
+                      <label htmlFor="promptContent" className="block text-custom-body font-custom-body-weight text-text-on-light">Prompt</label>
                       <textarea
+                        id="promptContent"
                         value={newPrompt.content}
                         onChange={(e) => setNewPrompt({...newPrompt, content: e.target.value})}
                         rows={4}
@@ -709,112 +674,111 @@ function App() {
                     </button>
                   </form>
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-96 overflow-y-auto"> {/* Scrollbar für Prompt-Liste */}
+                    {globalPrompts.length === 0 && <p className="text-text-muted-on-light">Noch keine globalen Prompts gespeichert.</p>}
                     {globalPrompts.map((prompt) => (
-                      <div key={prompt.id} className="bg-surface-light p-4 border border-highlight-200">
+                      <div key={prompt.id} className="bg-gray-50 p-4 border border-gray-200">
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="text-custom-h3 font-custom-h3-weight text-text-on-light">{prompt.title}</h3>
-                            <span className="text-custom-body font-custom-body-weight text-text-muted-on-light">{prompt.category}</span>
+                            <span className="text-xs text-text-muted-on-light bg-gray-200 px-1 py-0.5">{prompt.category}</span>
                           </div>
                           <button
                             onClick={() => deletePrompt(prompt.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className="text-red-500 hover:text-red-700"
+                            title="Prompt löschen"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
                         <p className="text-custom-body font-custom-body-weight text-text-on-light whitespace-pre-wrap">{prompt.content}</p>
-                        <p className="text-custom-body font-custom-body-weight text-text-muted-on-light mt-2">
-                          Erstellt am {new Date(prompt.createdAt).toLocaleDateString()}
+                        <p className="text-xs text-text-muted-on-light mt-2">
+                          Erstellt am: {new Date(prompt.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="bg-surface-light p-6 border border-primary-100">
+                {/* Globale Dateien Sektion */}
+                <div className="bg-surface-light p-6 border border-gray-200">
                   <h2 className="text-custom-h2 font-custom-h2-weight text-text-on-light mb-4">Globale Dateien</h2>
-                  <div
+                  <form
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
-                    className={`border-2 border-dashed p-8 text-center ${
-                      dragActive ? 'border-highlight-400 bg-highlight-50' : 'border-gray-300'
+                    onSubmit={(e) => e.preventDefault()} // Verhindert Formular-Submit beim Drücken von Enter im File-Dialog
+                    className={`border-2 border-dashed p-8 text-center mb-6 ${
+                      dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
-                    <Upload className="mx-auto h-12 w-12 text-text-muted-on-light" />
-                    <p className="mt-2 text-custom-body font-custom-semibold text-text-on-light">
-                      Dateien hierher ziehen oder klicken zum Auswählen
-                    </p>
-                    <p className="mt-1 text-custom-body font-custom-body-weight text-text-muted-on-light">
-                      PDF, DOC, DOCX, TXT bis zu 10MB
-                    </p>
                     <input
                       type="file"
                       multiple
                       onChange={handleFileInput}
                       className="hidden"
                       id="file-upload-datacenter"
-                      accept=".pdf,.doc,.docx,.txt"
+                      accept=".pdf,.doc,.docx,.txt,.md" // Akzeptierte Dateitypen
                     />
                     <label
                       htmlFor="file-upload-datacenter"
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-custom-button font-custom-button-weight text-button-primary-text bg-button-primary-bg hover:bg-button-primary-hover-bg cursor-pointer"
+                      className="cursor-pointer flex flex-col items-center"
                     >
-                      <Upload className="w-5 h-5 mr-2" />
-                      Dateien auswählen
+                      <Upload className="mx-auto h-12 w-12 text-text-muted-on-light" />
+                      <p className="mt-2 text-custom-body font-custom-semibold text-text-on-light">
+                        Dateien hierher ziehen oder klicken zum Auswählen
+                      </p>
+                      <p className="mt-1 text-xs text-text-muted-on-light">
+                        (PDF, DOC, DOCX, TXT, MD - max. 10MB)
+                      </p>
                     </label>
-                  </div>
+                  </form>
 
-                  {uploadedFiles.length > 0 && (
-                    <div className="mt-8">
-                      <h3 className="text-custom-h3 font-custom-h3-weight text-text-on-light mb-4">Hochgeladene Dateien</h3>
-                      <div className="space-y-4">
-                        {uploadedFiles.map((file) => (
-                          <div
-                            key={file.id}
-                            className="flex items-center justify-between bg-surface-light p-4 border border-highlight-200"
-                          >
-                            <div className="flex items-center">
-                              <FileText className="w-5 h-5 text-text-muted-on-light mr-3" />
-                              <div>
-                                <p className="text-custom-body font-custom-body-weight text-text-on-light">{file.name}</p>
-                                <p className="text-custom-body font-custom-body-weight text-text-muted-on-light">
-                                  {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => deleteFile(file.id)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
+                  <div className="space-y-4 max-h-96 overflow-y-auto"> {/* Scrollbar für Datei-Liste */}
+                    {uploadedFiles.length === 0 && <p className="text-text-muted-on-light">Noch keine globalen Dateien hochgeladen.</p>}
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className="flex items-center justify-between bg-gray-50 p-3 border border-gray-200"
+                      >
+                        <div className="flex items-center overflow-hidden">
+                          <FileText className="w-5 h-5 text-text-muted-on-light mr-3 flex-shrink-0" />
+                          <div className="overflow-hidden">
+                            <p className="text-sm font-custom-body-weight text-text-on-light truncate" title={file.name}>{file.name}</p>
+                            <p className="text-xs text-text-muted-on-light">
+                              {formatFileSize(file.size)} • {new Date(file.uploadDate).toLocaleDateString()}
+                            </p>
                           </div>
-                        ))}
+                        </div>
+                        <button
+                          onClick={() => deleteFile(file.id)}
+                          className="text-red-500 hover:text-red-700 ml-2 flex-shrink-0"
+                          title="Datei löschen"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {activeTab === 'chat' && selectedAgent && (
-            <div className="flex flex-col h-full">
-              <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-4">
-                Chat mit: {selectedAgent.name}
+            <div className="flex flex-col h-full max-h-[calc(100vh-4.375rem-4rem)]"> {/* Begrenze Höhe für Chat */}
+              <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-4 flex-shrink-0">
+                Chat mit: <span className="text-highlight-300">{selectedAgent.name}</span>
               </h1>
 
               {selectedAgent.systemPrompt && (
-                <div className="mb-4 bg-page-bg">
+                <div className="mb-4 bg-page-bg flex-shrink-0">
                   <div
-                    className="flex justify-between items-center p-2 cursor-pointer bg-page-bg hover:bg-opacity-75"
+                    className="flex justify-between items-center p-2 cursor-pointer hover:bg-opacity-75"
                     onClick={() => setIsSystemPromptVisible(!isSystemPromptVisible)}
                   >
-                    <span className="text-custom-body font-custom-body-weight text-text-on-dark">Systemprompt</span>
+                    <span className="text-sm font-custom-body-weight text-text-on-dark">Systemprompt anzeigen/verbergen</span>
                     {isSystemPromptVisible ? (
                       <ChevronDown className="w-5 h-5 text-text-on-dark" />
                     ) : (
@@ -822,74 +786,64 @@ function App() {
                     )}
                   </div>
                   {isSystemPromptVisible && (
-                    <div className="bg-page-bg p-1 pt-0">
-                      <div className="bg-sidebar-bg p-3">
-                        <p className="text-custom-body font-custom-body-weight text-text-on-dark whitespace-pre-wrap">
-                          {selectedAgent.systemPrompt}
-                        </p>
-                      </div>
+                    <div className="bg-sidebar-bg p-3 mt-1 max-h-40 overflow-y-auto">
+                      <p className="text-xs font-custom-body-weight text-text-on-dark whitespace-pre-wrap">
+                        {selectedAgent.systemPrompt}
+                      </p>
                     </div>
                   )}
                 </div>
               )}
 
-              <div className="flex-grow bg-sidebar-bg p-4 overflow-y-auto mb-4">
+              <div className="flex-grow bg-sidebar-bg p-4 overflow-y-auto mb-4 shadow-inner"> {/* Chat Nachrichten Bereich */}
                 {messages.length === 0 && (
-                  <p className="text-custom-body font-custom-body-weight text-text-muted-on-dark text-center">Beginne die Konversation...</p>
+                  <p className="text-sm font-custom-body-weight text-text-muted-on-dark text-center">Beginne die Konversation oder stelle eine Frage...</p>
                 )}
                 {messages.map(msg => (
                   <div
                     key={msg.id}
-                    className={`mb-3 p-3 max-w-[80%] ${
+                    className={`mb-3 p-3 max-w-[85%] w-fit clear-both ${ /* w-fit und clear-both für korrekte Ausrichtung */
                       msg.sender === 'user'
                         ? 'bg-chat-user-message-bg text-chat-user-message-text ml-auto'
                         : 'bg-chat-agent-message-bg text-chat-agent-message-text mr-auto'
                     }`}
                   >
-                    <p className="text-custom-chat-message font-custom-chat-message-weight">{msg.text}</p>
+                    <p className="text-custom-chat-message font-custom-chat-message-weight whitespace-pre-wrap">{msg.text}</p>
                   </div>
                 ))}
 
                 {isAgentResponding && (
-                  <div className="flex justify-start mb-3">
-                    <div className="bg-chat-agent-message-bg text-chat-agent-message-text p-3 max-w-[80%] mr-auto">
+                  <div className="flex justify-start mb-3 clear-both">
+                    <div className="bg-chat-agent-message-bg text-chat-agent-message-text p-3 max-w-[85%] mr-auto w-fit">
                       <p className="text-custom-chat-message font-custom-chat-message-weight italic">Agent denkt nach...</p>
                     </div>
                   </div>
                 )}
-
                 <div ref={chatEndRef} />
               </div>
 
               <form
                 onSubmit={handleSendMessage}
-                className="flex items-start gap-2 p-4 bg-sidebar-bg"
+                className="flex items-start gap-2 p-2 bg-sidebar-bg border-t border-surface-dark flex-shrink-0"
               >
                 <textarea
                   ref={textareaRef}
                   value={chatInput}
-                  onChange={(e) => {
-                    setChatInput(e.target.value);
-                    if (textareaRef.current) {
-                      textareaRef.current.style.height = 'auto';
-                      const scrollHeight = textareaRef.current.scrollHeight;
-                      const maxHeight = 6 * 24;
-                      textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
-                      textareaRef.current.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
-                    }
-                  }}
-                  onKeyPress={(e) => {
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => { // Geändert von onKeyPress zu onKeyDown für bessere Shift+Enter Handhabung
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
-                      handleSendMessage(e as any);
+                      handleSendMessage(); // Rufe ohne Event-Objekt auf
                     }
                   }}
-                  placeholder="Deine Nachricht..."
-                  className="flex-grow p-2 border-0 resize-none focus:ring-focus-ring focus:border-focus-ring form-textarea text-custom-chat-input font-custom-chat-input-weight text-chat-input-text bg-chat-input-bg"
+                  placeholder="Deine Nachricht an den Agenten..."
+                  className="flex-grow p-2 border-gray-600 bg-chat-input-bg text-chat-input-text focus:ring-focus-ring focus:border-focus-ring form-textarea text-custom-chat-input font-custom-chat-input-weight resize-none overflow-hidden"
+                  rows={1} // Startet mit einer Zeile, Höhe wird dynamisch angepasst
                 />
                 <button
                   type="submit"
-                  className="p-2 bg-button-primary-bg text-button-primary-text hover:bg-button-primary-hover-bg"
+                  className="p-2 bg-button-primary-bg text-button-primary-text hover:bg-button-primary-hover-bg disabled:opacity-50"
+                  disabled={isAgentResponding || chatInput.trim() === ''}
                 >
                   <Send className="w-5 h-5" />
                 </button>
@@ -900,17 +854,16 @@ function App() {
           {activeTab === 'chat' && !selectedAgent && (
             <div>
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Chat</h1>
-              <p className="text-custom-body font-custom-body-weight text-text-on-dark">Bitte wähle zuerst einen Agenten aus.</p>
+              <p className="text-custom-body font-custom-body-weight text-text-on-dark">
+                Bitte wähle zuerst einen Agenten aus der Liste "Meine Agents" oder dem Submenü aus, um mit ihm zu chatten.
+              </p>
             </div>
           )}
 
           {activeTab === 'designAdmin' && (
-            <div>
-              <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Design Administration</h1>
-              <DesignAdminPage />
-            </div>
+            <DesignAdminPage /> // DesignAdminPage rendert eigene Überschrift etc.
           )}
-        </div>
+        </main>
       </div>
     </div>
   );
