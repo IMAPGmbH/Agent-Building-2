@@ -98,6 +98,7 @@ const DesignAdminPage: React.FC = () => {
       defaultPtSize: 10.5,
       defaultWeight: '400',
       description: 'Text innerhalb der Chatblasen.'
+    
     },
     {
       label: 'Chat Eingabefeld Text',
@@ -177,7 +178,7 @@ const DesignAdminPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-surface-light p-8 text-text-on-light rounded-lg shadow-xl">
+    <div className="bg-surface-light p-8 text-text-on-light shadow-xl">
       <h1 className="text-custom-h1 font-custom-h1-weight font-headings mb-8 pb-2 border-b border-gray-300">
         Design-Einstellungen
       </h1>
@@ -186,7 +187,7 @@ const DesignAdminPage: React.FC = () => {
         <h2 className="text-custom-h2 font-custom-h2-weight font-headings mb-6">Farbeinstellungen</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           {editableColorSettings.map(setting => (
-            <div key={setting.variableName} className="p-4 border border-gray-200 rounded-md shadow-sm bg-white">
+            <div key={setting.variableName} className="p-4 border border-gray-200 shadow-sm bg-white">
               <label htmlFor={setting.variableName} className="block text-sm font-custom-medium text-gray-700 mb-1">
                 {setting.label}
               </label>
@@ -197,18 +198,18 @@ const DesignAdminPage: React.FC = () => {
                   id={`${setting.variableName}-colorpicker`}
                   value={colorValues[setting.variableName]?.match(/^#[0-9a-fA-F]{6}$/i) ? colorValues[setting.variableName] : '#000000'}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => handleColorChange(setting.variableName, e.target.value)}
-                  className="h-10 w-10 p-0 border-none rounded-md cursor-pointer shadow"
+                  className="h-10 w-10 p-0 border-0 cursor-pointer shadow"
                 />
                 <input
                   type="text"
                   id={setting.variableName}
                   value={colorValues[setting.variableName] || ''}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => handleTextInputChange(setting.variableName, e.target.value)}
-                  className="form-input flex-grow text-sm border-gray-300 rounded-md shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50 placeholder-gray-400"
+                  className="form-input flex-grow text-sm border-gray-300 shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50 placeholder-gray-400"
                   placeholder="#RRGGBB"
                 />
                 <div 
-                  className="w-10 h-10 rounded-md border border-gray-300 shadow-inner"
+                  className="w-10 h-10 border border-gray-300 shadow-inner"
                   style={{ backgroundColor: colorValues[setting.variableName] || 'transparent' }}
                 ></div>
               </div>
@@ -223,7 +224,7 @@ const DesignAdminPage: React.FC = () => {
         </h2>
         <div className="space-y-6">
           {editableFontSettings.map(setting => (
-            <div key={setting.label} className="p-4 border border-gray-200 rounded-md shadow-sm bg-white">
+            <div key={setting.label} className="p-4 border border-gray-200 shadow-sm bg-white">
               <h3 className="text-md font-custom-semibold text-gray-800 mb-1">{setting.label}</h3>
               {setting.description && <p className="text-xs text-gray-500 mb-3">{setting.description}</p>}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -236,7 +237,7 @@ const DesignAdminPage: React.FC = () => {
                     id={`${setting.sizeVariable}-size`}
                     value={fontSizesPt[setting.sizeVariable] || setting.defaultPtSize}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => handleFontSizeChange(setting.sizeVariable, parseFloat(e.target.value))}
-                    className="form-input w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
+                    className="form-input w-full text-sm border-gray-300 shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
                     min="1"
                     step="1"
                   />
@@ -249,7 +250,7 @@ const DesignAdminPage: React.FC = () => {
                     id={`${setting.weightVariable}-weight`}
                     value={fontWeights[setting.weightVariable] || setting.defaultWeight}
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => handleFontWeightChange(setting.weightVariable, e.target.value)}
-                    className="form-select w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
+                    className="form-select w-full text-sm border-gray-300 shadow-sm focus:border-focus-ring focus:ring focus:ring-focus-ring focus:ring-opacity-50"
                   >
                     <option value="400">Regular (400)</option>
                     <option value="600">Semibold (600)</option>
@@ -263,7 +264,7 @@ const DesignAdminPage: React.FC = () => {
       
       <div className="mt-12 pt-6 border-t border-gray-300">
         <button 
-          className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight rounded-md hover:bg-button-primary-hover-bg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg"
+          className="px-6 py-3 bg-button-primary-bg text-button-primary-text text-custom-button font-custom-button-weight shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-button-primary-hover-bg"
         >
           Einstellungen speichern (Backend-Anbindung folgt)
         </button>

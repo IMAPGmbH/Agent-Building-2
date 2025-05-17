@@ -393,6 +393,9 @@ function App() {
               <h1 className="text-custom-h1 font-custom-h1-weight text-text-on-dark mb-6">Meine Agents</h1>
               {agents.length === 0 ? (
                 <div className="bg-surface-light p-6 border border-primary-100">
+                  <p className="text-custom-body font-custom-body-weight text-text-muted-on-light">
+                    Du hast noch keine Agents erstellt. Erstelle deinen ersten Agent über den Button "Neuer Agent" in der Seitenleiste.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
