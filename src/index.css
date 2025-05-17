@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* === FARBEN === */
+  /* Primärpalette (Hintergründe, Oberflächen, Text) */
+  --color-page-bg: #383640;
+  --color-surface-light: #FFFFFF;
+  --color-surface-dark: #242329;
+  --color-text-on-dark: #FFFFFF;
+  --color-text-on-light: #000000;
+  --color-text-muted-on-dark: #b3b3b3;
+  --color-text-muted-on-light: #555555;
+
+  /* Sidebar */
+  --color-sidebar-bg: #242329;
+  --color-sidebar-text: #FFFFFF;
+  --color-sidebar-active-bg: #DBC6DE;
+  --color-sidebar-active-text: #000000;
+  --color-sidebar-hover-bg: #000000;
+
+  /* Akzente */
+  --color-accent-stripe: #BC9BC8;
+  --color-focus-ring: #ffe180;
+
+  /* Buttons (IMAP Palette) */
+  --color-button-primary-bg: #A0F0C3;
+  --color-button-primary-text: #12434D;
+  --color-button-primary-hover-bg: #90E0B3;
+
+  /* Links (IMAP Palette) */
+  --color-link-text: #00A89E;
+  --color-link-hover-text: #12434D;
+
+  /* Chatfenster */
+  --color-chat-user-message-bg: #383640;
+  --color-chat-user-message-text: #FFFFFF;
+  --color-chat-agent-message-bg: #DBC6DE;
+  --color-chat-agent-message-text: #242329;
+  --color-chat-input-bg: #FFFFFF;
+  --color-chat-input-text: #000000;
+  --color-chat-placeholder-text: #999999;
+
+  /* === SCHRIFTARTEN === */
+  --font-family-default: 'Poppins', sans-serif;
+  --font-family-headings: 'Poppins', sans-serif;
+
+  /* Schriftstärken */
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-medium: 500;
+
+  /* Schriftgrößen */
+  --font-size-sidebar-nav-item: 1rem;
+  --font-weight-sidebar-nav-item: 400;
+
+  --font-size-body: 1rem;
+  --font-weight-body: 400;
+
+  --font-size-h1: 1.875rem;
+  --font-weight-h1: 700;
+  --font-size-h2: 1.5rem;
+  --font-weight-h2: 600;
+  --font-size-h3: 1.25rem;
+  --font-weight-h3: 600;
+
+  --font-size-chat-message: 0.875rem;
+  --font-weight-chat-message: 400;
+  --font-size-chat-input: 0.875rem;
+  --font-weight-chat-input: 400;
+
+  --font-size-button: 0.875rem;
+  --font-weight-button: 500;
+}

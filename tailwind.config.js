@@ -4,70 +4,66 @@ export default {
   theme: {
     extend: {
       colors: {
-        'primary': {
-          50: '#f7f7f7',
-          100: '#e6e6e6',
-          200: '#cccccc',
-          300: '#b3b3b3',
-          400: '#999999',
-          450: '#87868D', // Page background
-          500: '#000000', // Base black
-          600: '#000000',
-          700: '#242329', // Dark sidebar
-          800: '#000000',
-          900: '#000000',
-        },
-        'secondary': {
-          50: '#f2eaf6',
-          100: '#e5d5ed',
-          150: '#DBC6DE', // Active sidebar item
-          200: '#BC9BC8', // Color stripe
-          300: '#ab82bc',
-          400: '#9a69b0',
-          500: '#82368C',
-          600: '#682b70',
-          700: '#4e2054',
-          800: '#341538',
-          900: '#1a0a1c',
-        },
-        'accent': {
-          50: '#f2eaf6',
-          100: '#e5d5ed',
-          200: '#BC9BC8',
-          300: '#ab82bc',
-          400: '#9a69b0',
-          500: '#82368C',
-          600: '#682b70',
-          700: '#4e2054',
-          800: '#341538',
-          900: '#1a0a1c',
-        },
-        'highlight': {
-          50: '#fff9e6',
-          100: '#ffedb3',
-          200: '#ffe180',
-          300: '#ffd54d',
-          400: '#ffc91a',
-          500: '#e6b300',
-          600: '#b38900',
-          700: '#805f00',
-          800: '#4d3800',
-          900: '#1a1300',
-        },
-        'imap': {
-          mint: '#A0F0C3',
-          mintHover: '#90E0B3',
-          turquoise: '#00A89E',
-          navy: '#12434D',
-          black: '#000000',
-          purple: '#82368C',
-          lavender: '#BC9BC8',
-          yellow: '#ffc91a'
-        }
+        'page-bg': 'var(--color-page-bg)',
+        'surface-light': 'var(--color-surface-light)',
+        'surface-dark': 'var(--color-surface-dark)',
+        'text-on-dark': 'var(--color-text-on-dark)',
+        'text-on-light': 'var(--color-text-on-light)',
+        'text-muted-on-dark': 'var(--color-text-muted-on-dark)',
+        'text-muted-on-light': 'var(--color-text-muted-on-light)',
+
+        'sidebar-bg': 'var(--color-sidebar-bg)',
+        'sidebar-text': 'var(--color-sidebar-text)',
+        'sidebar-active-bg': 'var(--color-sidebar-active-bg)',
+        'sidebar-active-text': 'var(--color-sidebar-active-text)',
+        'sidebar-hover-bg': 'var(--color-sidebar-hover-bg)',
+
+        'accent-stripe': 'var(--color-accent-stripe)',
+        'focus-ring': 'var(--color-focus-ring)',
+
+        'button-primary-bg': 'var(--color-button-primary-bg)',
+        'button-primary-text': 'var(--color-button-primary-text)',
+        'button-primary-hover-bg': 'var(--color-button-primary-hover-bg)',
+
+        'link': 'var(--color-link-text)',
+        'link-hover': 'var(--color-link-hover-text)',
+
+        'chat-user-message-bg': 'var(--color-chat-user-message-bg)',
+        'chat-user-message-text': 'var(--color-chat-user-message-text)',
+        'chat-agent-message-bg': 'var(--color-chat-agent-message-bg)',
+        'chat-agent-message-text': 'var(--color-chat-agent-message-text)',
+        'chat-input-bg': 'var(--color-chat-input-bg)',
+        'chat-input-text': 'var(--color-chat-input-text)',
+        'chat-placeholder-text': 'var(--color-chat-placeholder-text)'
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        rubik: ['Rubik', 'sans-serif']
+        sans: 'var(--font-family-default)',
+        headings: 'var(--font-family-headings)'
+      },
+      fontSize: {
+        'custom-sidebar-nav': 'var(--font-size-sidebar-nav-item)',
+        'custom-body': 'var(--font-size-body)',
+        'custom-h1': 'var(--font-size-h1)',
+        'custom-h2': 'var(--font-size-h2)',
+        'custom-h3': 'var(--font-size-h3)',
+        'custom-chat-message': 'var(--font-size-chat-message)',
+        'custom-chat-input': 'var(--font-size-chat-input)',
+        'custom-button': 'var(--font-size-button)'
+      },
+      fontWeight: {
+        'custom-regular': 'var(--font-weight-regular)',
+        'custom-medium': 'var(--font-weight-medium)',
+        'custom-semibold': 'var(--font-weight-semibold)',
+        'custom-bold': 'var(--font-weight-bold)',
+        
+        'custom-sidebar-nav': 'var(--font-weight-sidebar-nav-item)',
+        'custom-body-weight': 'var(--font-weight-body)',
+        'custom-h1-weight': 'var(--font-weight-h1)',
+        'custom-h2-weight': 'var(--font-weight-h2)',
+        'custom-h3-weight': 'var(--font-weight-h3)',
+        'custom-chat-message-weight': 'var(--font-weight-chat-message)',
+        'custom-chat-input-weight': 'var(--font-weight-chat-input)',
+        'custom-button-weight': 'var(--font-weight-button)'
       }
     },
   },
