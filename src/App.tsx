@@ -305,21 +305,17 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#383640]">
-      <nav className="bg-primary-500 border-b border-primary-600">
-        <div className="w-full">
-          <div className="flex justify-between h-16 pl-6 pr-8">
-            <div className="flex items-center gap-3">
-              <ImapLogo />
-              <span className="font-sans font-normal text-xl text-white tracking-tight">Agent Building</span>
-            </div>
-          </div>
+      <nav className="bg-primary-500 border-b border-primary-600 fixed top-0 left-0 w-full z-50 h-16 flex justify-between items-center px-6">
+        <div className="flex items-center gap-3">
+          <ImapLogo />
+          <span className="font-sans font-normal text-xl text-white tracking-tight">Agent Building</span>
         </div>
       </nav>
 
-      <div className="w-full h-1.5 bg-secondary-200"></div>
+      <div className="w-full h-1.5 bg-secondary-200 fixed top-16 left-0 z-50"></div>
 
-      <div className="flex">
-        <div className="w-64 bg-primary-700 h-screen border-r border-primary-600 p-4">
+      <div className="flex mt-[4.375rem]">
+        <div className="w-64 bg-primary-700 border-r border-primary-600 p-4 fixed top-[4.375rem] left-0 h-[calc(100vh-4.375rem)] overflow-y-auto">
           <div className="space-y-4">
             <button
               onClick={() => {
@@ -376,34 +372,10 @@ function App() {
               <Database className="w-5 h-5" />
               <span>Datencenter</span>
             </button>
-            <button
-              onClick={() => {
-                if (!selectedAgent && agents.length > 0) {
-                  setSelectedAgent(agents[0]);
-                } else if (!selectedAgent) {
-                  setSelectedAgent({
-                    id: 'demo',
-                    name: 'Demo Agent',
-                    description: 'Ein Agent zum Testen des Chats',
-                    systemPrompt: 'Du bist ein hilfreicher Assistent, der für Demonstrationszwecke dient.',
-                    configuration: {}
-                  });
-                }
-                setActiveTab('chat');
-                setMessages([]);
-                setIsSystemPromptVisible(false);
-              }}
-              className={`flex items-center space-x-2 w-full p-2 ${
-                activeTab === 'chat' ? 'bg-secondary-200 text-black' : 'text-white hover:bg-primary-600'
-              }`}
-            >
-              <MessageSquare className="w-5 h-5" />
-              <span>Chat-Vorschau</span>
-            </button>
           </div>
         </div>
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 ml-64">
           {activeTab === 'dashboard' && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Meine Agents</h1>
@@ -657,7 +629,7 @@ function App() {
           )}
 
           {activeTab === 'chat' && selectedAgent && (
-            <div className="flex flex-col h-[calc(100vh-10rem)]">
+            <div className="flex flex-col h-full">
               <h1 className="text-2xl font-bold text-white mb-4">
                 Chat mit: {selectedAgent.name}
               </h1>
@@ -754,7 +726,7 @@ function App() {
           {activeTab === 'chat' && !selectedAgent && (
             <div>
               <h1 className="text-2xl font-bold text-white mb-6">Chat</h1>
-              <p className="text-white">Bitte wähle zuerst einen Agenten aus oder nutze die Chat-Vorschau mit einem Demo-Agenten.</p>
+              <p className="text-white">Bitte wähle zuerst einen Agenten aus.</p>
             </div>
           )}
         </div>
